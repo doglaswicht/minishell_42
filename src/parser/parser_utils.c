@@ -16,8 +16,22 @@
 
 void	free_command_list(t_cmd *cmds)
 {
-	(void)cmds;
-	// TODO: free command list properly
+	    t_cmd   *tmp;
+    size_t  i;
+
+    while (cmds)
+    {
+        tmp = cmds->next;
+        if (cmds->argv)
+        {
+            i = 0;
+            while (cmds->argv[i])
+                free(cmds->argv[i++]);
+            free(cmds->argv);
+        }
+        free(cmds);
+        cmds = tmp;
+    }
 }
 
 void	ft_add_arg(char ***argv, const char *value)
