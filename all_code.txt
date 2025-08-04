@@ -1,0 +1,2202 @@
+===== File: ./src/expansion/expand_main.c =====
+
+
+
+===== File: ./src/expansion/expand_exit.c =====
+
+
+
+===== File: ./src/expansion/expand_utils.c =====
+
+
+
+===== File: ./src/expansion/expand_env.c =====
+
+
+
+===== File: ./src/tokenizer/token_free.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   token_free.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/06 12:15:18 by pedroribeir       #+#    #+#             */
+/*   Updated: 2025/07/24 00:28:02 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tokenizer.h"
+
+# define TOKEN_WORD 0
+# define TOKEN_PIPE 1
+# define TOKEN_REDIR_IN 2
+# define TOKEN_REDIR_OUT 3
+# define TOKEN_REDIR_APPEND 4
+# define TOKEN_HEREDOC 5
+# define TOKEN_AND_IF 6
+# define TOKEN_OR_IF 7
+# define TOKEN_UNKNOWN 999
+
+void	free_token_list(t_token *head)
+{
+	(void)head;
+}
+
+
+===== File: ./src/tokenizer/token_type.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   token_type.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/06 12:16:07 by pedroribeir       #+#    #+#             */
+/*   Updated: 2025/06/06 12:25:30 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tokenizer.h"
+
+int	token_type(const char *str)
+{
+	if (str == NULL)
+		return (TOKEN_UNKNOWN);
+	if (str[0] == '|' && str[1] == '|')
+		return (TOKEN_OR_IF);
+	if (str[0] == '&' && str[1] == '&')
+		return (TOKEN_AND_IF);
+	if (str[0] == '<' && str[1] == '<')
+		return (TOKEN_HEREDOC);
+	if (str[0] == '>' && str[1] == '>')
+		return (TOKEN_REDIR_APPEND);
+	if (str[0] == '<')
+		return (TOKEN_REDIR_IN);
+	if (str[0] == '>')
+		return (TOKEN_REDIR_OUT);
+	if (str[0] == '|')
+		return (TOKEN_PIPE);
+	return (TOKEN_WORD);
+}
+
+
+
+===== File: ./src/tokenizer/tokenizer.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenizer.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/06 12:25:12 by pedroribeir       #+#    #+#             */
+/*   Updated: 2025/06/06 12:25:13 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "tokenizer.h"
+#include "libft.h"
+#include <stdlib.h>
+
+static void	skip_whitespace(const char *line, int *i)
+{
+	while (line[*i] && is_space(line[*i]))
+		(*i)++;
+}
+
+static void	handle_word_token(const char *line, int *i, t_token **head)
+{
+	const char	*start;
+	int			length;
+	char		*value;
+
+	start = &line[*i];
+	length = 0;
+	while (line[*i] && !is_space(line[*i]) && !is_metachar(line[*i]))
+	{
+		(*i)++;
+		length++;
+	}
+	value = ft_strndup(start, length);
+	add_token(head, new_token(value, TOKEN_WORD));
+}
+
+static void	handle_metachar_token(const char *line, int *i, t_token **head)
+{
+	char		*value;
+	int			type;
+
+	value = ft_strndup(&line[*i], 1);
+	type = token_type(&line[*i]);
+	(*i)++;
+	add_token(head, new_token(value, type));
+}
+
+t_token	*tokenize_input(const char *line)
+{
+	t_token	*head;
+	int		i;
+
+	if (!line)
+		return (NULL);
+	head = NULL;
+	i = 0;
+	while (line[i])
+	{
+		skip_whitespace(line, &i);
+		if (line[i] && !is_metachar(line[i]))
+			handle_word_token(line, &i, &head);
+		else if (line[i] && is_metachar(line[i]))
+			handle_metachar_token(line, &i, &head);
+	}
+	return (head);
+}
+
+
+
+===== File: ./src/tokenizer/token_utils.c =====
+#include "tokenizer.h"  // Para os protótipos das funções que você está implementando
+#include <stdlib.h>     // Para malloc
+
+
+int	is_space(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n'
+		|| c == '\v' || c == '\f' || c == '\r');
+}
+
+int	is_metachar(char c)
+{
+	return (c == '|' || c == '<' || c == '>');
+}
+
+#include <stdlib.h>
+
+t_token	*new_token(const char *value, t_token_type type)
+{
+	t_token	*token;
+
+	token = malloc(sizeof(t_token));
+	if (!token)
+		return (NULL);
+	token->value = (char *)value;
+	token->type = type;
+	token->next = NULL;
+	return (token);
+}
+
+void	add_token(t_token **list, t_token *new)
+{
+	t_token	*temp;
+
+	if (!list || !new)
+		return ;
+	if (!*list)
+	{
+		*list = new;
+		return ;
+	}
+	temp = *list;
+	while (temp->next)
+		temp = temp->next;
+	temp->next = new;
+}
+
+
+
+===== File: ./src/input/readline_config.c =====
+#include <readline/readline.h>
+
+
+// No need for this function at all
+void	init_readline(void)
+{
+    // rl_catch_signals = 0; // 🔥 REMOVE IT
+}
+
+
+===== File: ./src/input/prompt_state.c =====
+
+
+
+===== File: ./src/input/read_input.c =====
+#include <readline/readline.h>
+#include <stdlib.h>
+#include "input.h"
+
+char	*read_user_input(void)
+{
+	char	*line;
+
+	line = readline(" minishell$ ");
+	if (!line)
+	{
+		write(1, "exit\n", 5);
+		return (NULL);
+	}
+	if (*line)
+		add_history(line);
+	return (line);
+}
+
+
+===== File: ./src/builtin/export.c =====
+
+
+
+===== File: ./src/builtin/exit.c =====
+
+
+
+===== File: ./src/builtin/cd.c =====
+
+
+
+===== File: ./src/builtin/export_utils.c =====
+
+
+
+===== File: ./src/builtin/echo.c =====
+
+
+
+===== File: ./src/builtin/unset.c =====
+
+
+
+===== File: ./src/builtin/dispatcher.c =====
+
+
+
+===== File: ./src/builtin/env.c =====
+
+
+
+===== File: ./src/builtin/pwd.c =====
+
+
+
+===== File: ./src/parser/parser_main.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_main.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/06 12:27:37 by pedroribeir       #+#    #+#             */
+/*   Updated: 2025/06/06 18:29:49 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "parser.h"
+#include "libft.h"
+#include <stdlib.h>
+
+static t_cmd	*new_command_node(void)
+{
+	t_cmd	*cmd;
+
+	cmd = malloc(sizeof(t_cmd));
+	if (!cmd)
+		return (NULL);
+	cmd->argv = NULL;
+	cmd->redir = NULL;
+	cmd->next = NULL;
+	return (cmd);
+}
+
+static void	add_command_node(t_cmd **cmds, t_cmd *new)
+{
+	t_cmd	*tmp;
+
+	if (!*cmds)
+	{
+		*cmds = new;
+		return ;
+	}
+	tmp = *cmds;
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = new;
+}
+
+t_cmd	*parse_tokens_to_cmds(t_token *tokens)
+{
+	t_cmd	*cmds;
+	t_cmd	*current;
+
+	cmds = NULL;
+	current = NULL;
+	while (tokens)
+	{
+		if (!current)
+		{
+			current = new_command_node();
+			if (!current)
+				return (NULL);
+			add_command_node(&cmds, current);
+		}
+		if (tokens->type == TOKEN_WORD)
+			ft_add_arg(&current->argv, tokens->value);
+		else if (tokens->type == TOKEN_PIPE)
+			current = NULL;
+		tokens = tokens->next;
+	}
+	return (cmds);
+}
+
+
+===== File: ./src/parser/parser_utils.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_utils.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/06 12:27:50 by pedroribeir       #+#    #+#             */
+/*   Updated: 2025/07/24 00:27:18 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "parser.h"
+#include "libft.h"
+#include <stdlib.h>
+
+void	free_command_list(t_cmd *cmds)
+{
+	(void)cmds;
+	// TODO: free command list properly
+}
+
+void	ft_add_arg(char ***argv, const char *value)
+{
+	size_t	len;
+	char	**new_argv;
+	size_t	i;
+
+	if (!value)
+		return ;
+	len = 0;
+	while (*argv && (*argv)[len])
+		len++;
+	new_argv = malloc(sizeof(char *) * (len + 2));
+	if (!new_argv)
+		return ;
+	i = 0;
+	while (*argv && (*argv)[i])
+	{
+		new_argv[i] = ft_strdup((*argv)[i]);
+		i++;
+	}
+	new_argv[i++] = ft_strdup(value);
+	new_argv[i] = NULL;
+	if (*argv)
+	{
+		i = 0;
+		while ((*argv)[i])
+			free((*argv)[i++]);
+		free(*argv);
+	}
+	*argv = new_argv;
+}
+
+
+===== File: ./src/parser/parser_split.c =====
+
+
+
+===== File: ./src/parser/parser_cmd.c =====
+
+
+
+===== File: ./src/cleanup/cleanup.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cleanup.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/04 15:20:07 by pedroribeir       #+#    #+#             */
+/*   Updated: 2025/08/04 15:21:53 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "cleanup.h"
+
+void free_shell(t_shell *shell)
+{
+	if (!shell)
+		return;
+	if (shell->env)
+		free_env_list(shell->env);
+}
+
+
+
+===== File: ./src/cleanup/exit.c =====
+#include "cleanup.h"
+
+void exit_clean(t_shell *shell, int code)
+{
+    if (shell)
+        free_shell(shell);
+    exit(code);
+}
+
+
+
+===== File: ./src/main/main.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/26 20:05:33 by procha-r          #+#    #+#             */
+/*   Updated: 2025/06/06 11:48:28 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+
+int	main(int argc, char **argv, char **envp)
+{
+	t_shell	shell;
+	char	*line;
+	t_token	*tokens;
+	t_cmd	*cmds;
+
+	(void)argc;
+	(void)argv;
+	shell.env = init_env_from_environ(envp);
+	shell.last_exit_code = 0;
+	shell.is_running = 1;
+	while (shell.is_running)
+	{
+		line = read_user_input();
+		if (!line)
+			break ;
+		tokens = tokenize_input(line);
+		cmds = parse_tokens_to_cmds(tokens);
+		if (cmds)
+			execute_pipeline(cmds, &shell);
+		free_command_list(cmds);
+		free_token_list(tokens);
+		free(line);
+	}
+	exit_clean(&shell, 0);
+}
+
+
+===== File: ./src/main/shell_loop.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   shell_loop.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/06 11:51:29 by pedroribeir       #+#    #+#             */
+/*   Updated: 2025/06/06 11:54:35 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+#include "input.h"
+#include "tokenizer.h"
+#include <readline/readline.h>
+#include <readline/history.h>
+
+int    shell_loop(t_shell *shell)
+{
+    char	*line;
+
+    shell->is_running = 1;
+    while (shell->is_running)
+    {
+        line = read_user_input();
+        if (!line)
+            break ;
+        if (line)
+            add_history(line);
+        // Aqui entra o tokenizer e processamento dos comandos futuramente
+        free(line);
+    }
+    return (0);
+}
+
+
+===== File: ./src/quotes/quote_strip.c =====
+
+
+
+===== File: ./src/quotes/quote_type.c =====
+
+
+
+===== File: ./src/quotes/quote_check.c =====
+
+
+
+===== File: ./src/libft/ft_substr.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_substr.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 02:02:47 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/11 02:09:53 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	char	*substr;
+	size_t	s_len;
+	size_t	i;
+
+	if (!s)
+		return (NULL);
+	s_len = ft_strlen(s);
+	if (start >= s_len)
+		return (ft_strdup(""));
+	if (len > s_len - start)
+		len = s_len - start;
+	substr = (char *)malloc(sizeof(char) * (len + 1));
+	if (!substr)
+		return (NULL);
+	i = 0;
+	while (i < len && s[start + i] != '\0')
+	{
+		substr[i] = s[start + i];
+		i++;
+	}
+	substr[i] = '\0';
+	return (substr);
+}
+
+
+
+===== File: ./src/libft/ft_strjoin.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 02:22:34 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/11 02:32:16 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+static void	copy_str(char *dest, const char *src, size_t start)
+{
+	size_t	i;
+
+	i = 0;
+	while (src[i] != '\0')
+	{
+		dest[start + i] = src[i];
+		i++;
+	}
+}
+
+char	*ft_strjoin(char const *s1, char const *s2)
+{
+	char	*joined_str;
+	size_t	s1_len;
+	size_t	s2_len;
+
+	if (!s1 || !s2)
+		return (NULL);
+	s1_len = ft_strlen(s1);
+	s2_len = ft_strlen(s2);
+	joined_str = (char *)malloc(sizeof(char) * (s1_len + s2_len + 1));
+	if (!joined_str)
+		return (NULL);
+	copy_str(joined_str, s1, 0);
+	copy_str(joined_str, s2, s1_len);
+	joined_str[s1_len + s2_len] = '\0';
+	return (joined_str);
+}
+
+
+
+===== File: ./src/libft/ft_itoa.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_itoa.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 17:54:21 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/11 18:04:15 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+static int	count_digits(int n)
+{
+	int	digits;
+
+	digits = 0;
+	if (n <= 0)
+		digits++;
+	while (n != 0)
+	{
+		n = n / 10;
+		digits++;
+	}
+	return (digits);
+}
+
+char	*ft_itoa(int n)
+{
+	char	*str;
+	int		len;
+	long	nb;
+
+	len = count_digits(n);
+	str = (char *)malloc(sizeof(char) * (len + 1));
+	if (!str)
+		return (NULL);
+	nb = n;
+	if (nb < 0)
+	{
+		str[0] = '-';
+		nb = -nb;
+	}
+	str[len] = '\0';
+	while (len-- && str[len] != '-')
+	{
+		str[len] = (nb % 10) + '0';
+		nb = nb / 10;
+	}
+	return (str);
+}
+
+
+
+===== File: ./src/libft/ft_memset.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_memset.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 20:37:54 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/10 20:40:47 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void	*ft_memset(void *b, int c, size_t len)
+{
+	unsigned char	*ptr;
+	size_t			i;
+
+	ptr = (unsigned char *)b;
+	i = 0;
+	while (i < len)
+	{
+		ptr[i] = (unsigned char)c;
+		i++;
+	}
+	return (b);
+}
+
+
+
+===== File: ./src/libft/ft_putendl_fd.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_putendl_fd.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 20:03:26 by pedroribeir       #+#    #+#             */
+/*   Updated: 2025/05/01 12:02:13 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void	ft_putendl_fd(char *s, int fd)
+{
+	int	i;
+
+	if (s == NULL)
+		return ;
+	i = 0;
+	while (s[i] != '\0')
+	{
+		write(fd, &s[i], 1);
+		i++;
+	}
+	write(fd, "\n", 1);
+}
+
+
+
+===== File: ./src/libft/ft_strmapi.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strmapi.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 18:09:32 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/11 18:14:59 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
+{
+	char			*result;
+	unsigned int	i;
+	unsigned int	len;
+
+	if (!s || !f)
+		return (NULL);
+	len = 0;
+	while (s[len] != '\0')
+		len++;
+	result = (char *)malloc(sizeof(char) * (len + 1));
+	if (!result)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		result[i] = f(i, s[i]);
+		i++;
+	}
+	result[i] = '\0';
+	return (result);
+}
+
+
+
+===== File: ./src/libft/ft_memchr.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_memchr.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 00:16:42 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/11 00:19:25 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void	*ft_memchr(const void *s, int c, size_t n)
+{
+	const unsigned char	*ptr;
+	size_t				i;
+
+	ptr = (const unsigned char *)s;
+	i = 0;
+	while (i < n)
+	{
+		if (ptr[i] == (unsigned char)c)
+			return ((void *)&ptr[i]);
+		i++;
+	}
+	return (NULL);
+}
+
+
+
+===== File: ./src/libft/ft_strlen.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 20:35:08 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/10 20:36:17 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+size_t	ft_strlen(const char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
+
+
+
+===== File: ./src/libft/ft_strtrim.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strtrim.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 02:34:43 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/11 02:50:11 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+static int	is_in_set(char c, const char *set)
+{
+	while (*set)
+	{
+		if (c == *set)
+			return (1);
+		set++;
+	}
+	return (0);
+}
+
+char	*ft_strtrim(char const *s1, char const *set)
+{
+	size_t	start;
+	size_t	end;
+	char	*trimmed;
+
+	if (!s1 || !set)
+		return (NULL);
+	start = 0;
+	while (s1[start] && is_in_set(s1[start], set))
+		start++;
+	end = ft_strlen(s1);
+	while (end > start && is_in_set(s1[end - 1], set))
+		end--;
+	trimmed = (char *)malloc(sizeof(char) * (end - start + 1));
+	if (!trimmed)
+		return (NULL);
+	ft_strlcpy(trimmed, &s1[start], end - start + 1);
+	return (trimmed);
+}
+
+
+
+===== File: ./src/libft/ft_strncmp.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strncmp.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 00:54:15 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/11 00:58:57 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < n)
+	{
+		if (s1[i] != s2[i] || s1[i] == '\0' || s2[i] == '\0')
+			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+		i++;
+	}
+	return (0);
+}
+
+
+
+===== File: ./src/libft/ft_memcmp.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_memcmp.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 01:00:03 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/11 01:02:05 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+int	ft_memcmp(const void *s1, const void *s2, size_t n)
+{
+	const unsigned char	*ptr1;
+	const unsigned char	*ptr2;
+	size_t				i;
+
+	ptr1 = (const unsigned char *)s1;
+	ptr2 = (const unsigned char *)s2;
+	i = 0;
+	while (i < n)
+	{
+		if (ptr1[i] != ptr2[i])
+			return (ptr1[i] - ptr2[i]);
+		i++;
+	}
+	return (0);
+}
+
+
+
+===== File: ./src/libft/ft_strndup.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strndup.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/06 12:09:48 by pedroribeir       #+#    #+#             */
+/*   Updated: 2025/06/06 12:09:54 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <stdlib.h>
+#include "libft.h"
+
+char	*ft_strndup(const char *s, size_t n)
+{
+	char	*new;
+	size_t	i;
+
+	new = (char *)malloc(sizeof(char) * (n + 1));
+	if (!new)
+		return (NULL);
+	i = 0;
+	while (s[i] && i < n)
+	{
+		new[i] = s[i];
+		i++;
+	}
+	new[i] = '\0';
+	return (new);
+}
+
+
+===== File: ./src/libft/ft_putnbr_fd.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 20:11:11 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/11 20:13:14 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void	ft_putnbr_fd(int n, int fd)
+{
+	char	c;
+
+	if (n == -2147483648)
+	{
+		write(fd, "-2147483648", 11);
+		return ;
+	}
+	if (n < 0)
+	{
+		write(fd, "-", 1);
+		n = -n;
+	}
+	if (n >= 10)
+	{
+		ft_putnbr_fd(n / 10, fd);
+	}
+	c = (n % 10) + '0';
+	write(fd, &c, 1);
+}
+
+
+
+===== File: ./src/libft/ft_strlcpy.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strlcpy.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 21:19:31 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/10 21:22:27 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+size_t	ft_strlcpy(char *dst, const char *src, size_t size)
+{
+	const char	*src_char;
+	size_t		src_len;
+	size_t		i;
+
+	src_char = (const char *)src;
+	src_len = ft_strlen(src_char);
+	i = 0;
+	if (size > 0)
+	{
+		while (src_char[i] && i < (size - 1))
+		{
+			dst[i] = src_char[i];
+			i++;
+		}
+		dst[i] = '\0';
+	}
+	return (src_len);
+}
+
+
+
+===== File: ./src/libft/ft_isalpha.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_isalpha.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 20:00:49 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/10 20:05:43 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+int	ft_isalpha(int c)
+{
+	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		return (1);
+	return (0);
+}
+
+
+
+===== File: ./src/libft/ft_isalnum.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_isalnum.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 20:28:15 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/10 20:34:45 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+int	ft_isalnum(int c)
+{
+	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') \
+		|| (c >= '0' && c <= '9'))
+		return (1);
+	return (0);
+}
+
+
+
+===== File: ./src/libft/ft_isprint.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_isprint.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 20:07:47 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/10 20:08:18 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+int	ft_isprint(int c)
+{
+	if (c >= 32 && c <= 126)
+		return (1);
+	return (0);
+}
+
+
+
+===== File: ./src/libft/ft_striteri.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_striteri.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 18:15:48 by pedroribeir       #+#    #+#             */
+/*   Updated: 2025/05/01 12:02:24 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void	ft_striteri(char *s, void (*f)(unsigned int, char *))
+{
+	unsigned int	i;
+
+	if (s == NULL || f == NULL)
+		return ;
+	i = 0;
+	while (s[i] != '\0')
+	{
+		f(i, &s[i]);
+		i++;
+	}
+}
+
+
+
+===== File: ./src/libft/ft_putstr_fd.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 18:25:02 by pedroribeir       #+#    #+#             */
+/*   Updated: 2025/05/01 12:02:40 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void	ft_putstr_fd(char *s, int fd)
+{
+	int	i;
+
+	if (s == NULL)
+		return ;
+	i = 0;
+	while (s[i] != '\0')
+	{
+		write(fd, &s[i], 1);
+		i++;
+	}
+}
+
+
+
+===== File: ./src/libft/ft_isascii.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_isascii.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 20:29:27 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/10 20:34:17 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+int	ft_isascii(int c)
+{
+	if (c >= 0 && c <= 127)
+		return (1);
+	return (0);
+}
+
+
+
+===== File: ./src/libft/ft_calloc.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 01:49:44 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/11 01:53:05 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void	*ft_calloc(size_t count, size_t size)
+{
+	void	*ptr;
+	size_t	total_size;
+
+	total_size = count * size;
+	ptr = malloc(total_size);
+	if (ptr == NULL)
+		return (NULL);
+	ft_bzero(ptr, total_size);
+	return (ptr);
+}
+
+
+
+===== File: ./src/libft/ft_strdup.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strdup.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 01:56:22 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/11 02:02:08 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+char	*ft_strdup(const char *s1)
+{
+	size_t	len;
+	char	*dup;
+	size_t	i;
+
+	len = ft_strlen(s1);
+	dup = (char *)malloc((len + 1) * sizeof(char));
+	if (!dup)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		dup[i] = s1[i];
+		i++;
+	}
+	dup[i] = '\0';
+	return (dup);
+}
+
+
+
+===== File: ./src/libft/ft_isdigit.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_isdigit.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 20:06:09 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/10 21:10:47 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+int	ft_isdigit(int c)
+{
+	if (c >= '0' && c <= '9')
+		return (1);
+	return (0);
+}
+
+
+
+===== File: ./src/libft/ft_tolower.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_tolower.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 23:32:24 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/10 23:33:42 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+int	ft_tolower(int c)
+{
+	if (c >= 'A' && c <= 'Z')
+		return (c + 32);
+	return (c);
+}
+
+
+
+===== File: ./src/libft/ft_bzero.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_bzero.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 21:03:39 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/10 21:06:19 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void	ft_bzero(void *s, size_t n)
+{
+	size_t			i;
+	unsigned char	*ptr;
+
+	ptr = (unsigned char *)s;
+	i = 0;
+	while (i < n)
+	{
+		ptr[i] = 0;
+		i++;
+	}
+}
+
+
+
+===== File: ./src/libft/ft_atol.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_atol.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/29 16:58:55 by procha-r          #+#    #+#             */
+/*   Updated: 2025/04/29 17:20:45 by procha-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_atol.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/29 17:20:00 by procha-r          #+#    #+#             */
+/*   Updated: 2025/04/29 17:20:00 by procha-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+long	ft_atol(const char *str)
+{
+	long	result;
+	int		sign;
+	int		i;
+
+	result = 0;
+	sign = 1;
+	i = 0;
+	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
+		i++;
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i] == '-')
+			sign = -1;
+		i++;
+	}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		result = result * 10 + (str[i] - '0');
+		i++;
+	}
+	return (result * sign);
+}
+
+
+
+===== File: ./src/libft/ft_toupper.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_toupper.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 23:30:47 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/10 23:32:00 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+int	ft_toupper(int c)
+{
+	if (c >= 'a' && c <= 'z')
+		return (c - 32);
+	return (c);
+}
+
+
+
+===== File: ./src/libft/ft_memcpy.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_memcpy.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 21:06:59 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/10 21:12:00 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void	*ft_memcpy(void *dst, const void *src, size_t n)
+{
+	unsigned char	*d;
+	unsigned char	*s;
+	size_t			i;
+
+	d = (unsigned char *)dst;
+	s = (unsigned char *)src;
+	i = 0;
+	while (i < n)
+	{
+		d[i] = s[i];
+		i++;
+	}
+	return (dst);
+}
+
+
+
+===== File: ./src/libft/ft_strnstr.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strnstr.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 01:02:55 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/11 01:50:54 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+char	*ft_strnstr(const char *big, const char *little, size_t len)
+{
+	size_t	i;
+	size_t	j;
+
+	if (*little == '\0')
+		return ((char *)big);
+	i = 0;
+	while (big[i] != '\0' && i < len)
+	{
+		if (big[i] == little[0])
+		{
+			j = 0;
+			while (little[j] != '\0' && big[i + j] != '\0'
+				&& big[i + j] == little[j] && (i + j) < len)
+			{
+				j++;
+			}
+			if (little[j] == '\0')
+				return ((char *)&big[i]);
+		}
+		i++;
+	}
+	return (NULL);
+}
+
+
+
+===== File: ./src/libft/ft_strlcat.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strlcat.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 22:33:03 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/10 23:32:03 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+size_t	ft_strlcat(char *dest, const char *src, size_t size)
+{
+	size_t	dest_len;
+	size_t	src_len;
+	size_t	i;
+
+	dest_len = ft_strlen(dest);
+	src_len = ft_strlen(src);
+	if (size <= dest_len)
+		return (src_len + size);
+	i = 0;
+	while (src[i] && (dest_len + i) < (size - 1))
+	{
+		dest[dest_len + i] = src[i];
+		i++;
+	}
+	dest[dest_len + i] = '\0';
+	return (dest_len + src_len);
+}
+
+
+
+===== File: ./src/libft/ft_free_split.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_free_split.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/01 12:40:21 by procha-r          #+#    #+#             */
+/*   Updated: 2025/05/01 15:43:59 by procha-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <stdlib.h>
+
+void	ft_free_split(char **split)
+{
+	int	i;
+
+	if (!split)
+		return ;
+	i = 0;
+	while (split[i] != NULL)
+	{
+		free(split[i]);
+		i++;
+	}
+	free(split);
+}
+
+
+
+===== File: ./src/libft/ft_putchar_fd.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_putchar_fd.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 18:22:30 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/11 18:23:34 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+void	ft_putchar_fd(char c, int fd)
+{
+	write(fd, &c, 1);
+}
+
+
+
+===== File: ./src/libft/ft_strrchr.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strrchr.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 23:52:35 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/11 00:16:02 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+char	*ft_strrchr(const char *s, int c)
+{
+	const char	*ptr;
+
+	ptr = s;
+	while (*ptr != '\0')
+		ptr++;
+	while (ptr != s - 1)
+	{
+		if (*ptr == (char)c)
+			return ((char *)ptr);
+		ptr--;
+	}
+	return (NULL);
+}
+
+
+
+===== File: ./src/libft/ft_atoi.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_atoi.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 01:08:26 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/17 20:14:21 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+int	ft_atoi(const char *str)
+{
+	int	i;
+	int	sign;
+	int	result;
+
+	i = 0;
+	sign = 1;
+	result = 0;
+	while ((str[i] >= 9 && str[i] <= 13) || str[i] == ' ')
+		i++;
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i] == '-')
+			sign = -1;
+		i++;
+	}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		result = result * 10 + (str[i] - '0');
+		i++;
+	}
+	return (result * sign);
+}
+
+
+
+===== File: ./src/libft/ft_memmove.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_memmove.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 21:13:36 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/10 21:18:46 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+static void	copy_forward(unsigned char *dst, \
+		const unsigned char *src, size_t len)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < len)
+	{
+		dst[i] = src[i];
+		i++;
+	}
+}
+
+static void	copy_backward(unsigned char *dst, \
+		const unsigned char *src, size_t len)
+{
+	while (len > 0)
+	{
+		len--;
+		dst[len] = src[len];
+	}
+}
+
+void	*ft_memmove(void *dst, const void *src, size_t len)
+{
+	unsigned char		*d;
+	const unsigned char	*s;
+
+	if (dst == src || len == 0)
+		return (dst);
+	d = (unsigned char *)dst;
+	s = (const unsigned char *)src;
+	if (d < s)
+		copy_forward(d, s, len);
+	else
+		copy_backward(d, s, len);
+	return (dst);
+}
+
+
+
+===== File: ./src/libft/ft_split.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_split.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/11 03:01:04 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/11 03:08:08 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+static int	count_words(const char *s, char c)
+{
+	int	count;
+	int	in_word;
+
+	count = 0;
+	in_word = 0;
+	while (*s)
+	{
+		if (*s != c && in_word == 0)
+		{
+			in_word = 1;
+			count++;
+		}
+		else if (*s == c)
+			in_word = 0;
+		s++;
+	}
+	return (count);
+}
+
+static char	*copy_word(const char *s, int len)
+{
+	char	*word;
+	int		i;
+
+	word = (char *)malloc(sizeof(char) * (len + 1));
+	if (!word)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		word[i] = s[i];
+		i++;
+	}
+	word[i] = '\0';
+	return (word);
+}
+
+static void	free_words(char **words, int i)
+{
+	while (i > 0)
+	{
+		free(words[i - 1]);
+		i--;
+	}
+	free(words);
+}
+
+char	**ft_split(char const *s, char c)
+{
+	char	**words;
+	int		i;
+	int		len;
+
+	words = (char **)malloc(sizeof(char *) * (count_words(s, c) + 1));
+	if (!words || !s)
+		return (NULL);
+	i = 0;
+	while (*s)
+	{
+		if (*s != c)
+		{
+			len = 0;
+			while (s[len] && s[len] != c)
+				len++;
+			words[i] = copy_word(s, len);
+			if (!words[i++])
+				return (free_words(words, i - 1), NULL);
+			s += len;
+		}
+		else
+			s++;
+	}
+	words[i] = NULL;
+	return (words);
+}
+
+
+
+===== File: ./src/libft/ft_strchr.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/10 23:34:44 by pedroribeir       #+#    #+#             */
+/*   Updated: 2024/11/10 23:36:35 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+char	*ft_strchr(const char *s, int c)
+{
+	while (*s != '\0')
+	{
+		if (*s == (char)c)
+			return ((char *)s);
+		s++;
+	}
+	if ((char)c == '\0')
+		return ((char *)s);
+	return (NULL);
+}
+
+
+
+===== File: ./src/tests/01_pipeline_exec_fork_test.c =====
+
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <string.h>
+#include <errno.h>
+
+#define MAX_CMDS 4
+
+char *test_pipeline[][MAX_CMDS] = {
+	{"echo", "hello world", NULL},
+	{"ls", "-l", NULL},
+	{"grep", ".c", NULL},
+	{"wc", "-l", NULL}
+};
+
+void fatal(const char *msg)
+{
+	perror(msg);
+	exit(EXIT_FAILURE);
+}
+
+void run_test_pipeline(void)
+{
+	int i = 0;
+	int pipes[MAX_CMDS - 1][2];
+	pid_t pids[MAX_CMDS];
+
+	while (i < MAX_CMDS - 1)
+	{
+		if (pipe(pipes[i]) == -1)
+			fatal("pipe");
+		i++;
+	}
+
+	for (i = 0; i < MAX_CMDS; i++)
+	{
+		pids[i] = fork();
+		if (pids[i] < 0)
+			fatal("fork");
+
+		if (pids[i] == 0)
+		{
+			// CHILD PROCESS
+
+			if (i > 0)
+			{
+				if (dup2(pipes[i - 1][0], STDIN_FILENO) < 0)
+					fatal("dup2 stdin");
+			}
+			if (i < MAX_CMDS - 1)
+			{
+				if (dup2(pipes[i][1], STDOUT_FILENO) < 0)
+					fatal("dup2 stdout");
+			}
+
+			// Close all pipe ends in child
+			for (int j = 0; j < MAX_CMDS - 1; j++)
+			{
+				close(pipes[j][0]);
+				close(pipes[j][1]);
+			}
+
+			execlp(test_pipeline[i][0], test_pipeline[i][0], test_pipeline[i][1], test_pipeline[i][2], NULL);
+			fatal("exec");
+		}
+	}
+
+	// PARENT: Close all pipe ends
+	for (i = 0; i < MAX_CMDS - 1; i++)
+	{
+		close(pipes[i][0]);
+		close(pipes[i][1]);
+	}
+
+	// Wait all children
+	for (i = 0; i < MAX_CMDS; i++)
+	{
+		int status;
+		waitpid(pids[i], &status, 0);
+		if (WIFEXITED(status))
+			printf("[TEST] Child %d exited with code: %d\n", i, WEXITSTATUS(status));
+		else if (WIFSIGNALED(status))
+			printf("[TEST] Child %d killed by signal: %d\n", i, WTERMSIG(status));
+		else
+			printf("[TEST] Unknown termination of child %d\n", i);
+	}
+}
+
+int main(void)
+{
+	printf("🧪 [TEST] Running fork + pipeline chain test...\n\n");
+	run_test_pipeline();
+	printf("\n✅ [TEST COMPLETE] If output makes sense and no leaks => PASS\n");
+	return (0);
+}
+
+
+===== File: ./src/env/env_init.c =====
+#include "env.h"
+
+t_env	*init_env_from_environ(char **envp)
+{
+	t_env	*env;
+	char	*sep;
+	char	*key;
+	char	*value;
+
+	env = NULL;
+	while (*envp)
+	{
+		sep = ft_strchr(*envp, '=');
+		if (sep)
+		{
+			key = ft_substr(*envp, 0, sep - *envp);
+			value = ft_strdup(sep + 1);
+			add_env_node(key, value, &env);
+			free(key);
+			free(value);
+		}
+		envp++;
+	}
+	return (env);
+}
+
+
+
+===== File: ./src/env/env_set.c =====
+
+
+
+===== File: ./src/env/env_get.c =====
+
+
+
+===== File: ./src/env/env_free.c =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env_free.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/04 15:23:45 by pedroribeir       #+#    #+#             */
+/*   Updated: 2025/08/04 15:24:07 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "cleanup.h"
+
+void	free_env_list(t_env *env)
+{
+	t_env	*tmp;
+
+	while (env)
+	{
+		tmp = env->next;
+		free(env->key);
+		free(env->value);
+		free(env);
+		env = tmp;
+	}
+}
+
+
+
+===== File: ./src/env/env_unset.c =====
+
+
+
+===== File: ./src/env/env_utils.c =====
+#include "env.h"
+
+void	add_env_node(char *key, char *value, t_env **env_list)
+{
+	t_env	*new;
+	t_env	*last;
+
+	new = malloc(sizeof(t_env));
+	if (!new)
+		return ;
+	new->key = ft_strdup(key);
+	new->value = ft_strdup(value);
+	new->next = NULL;
+	if (!*env_list)
+		*env_list = new;
+	else
+	{
+		last = *env_list;
+		while (last->next)
+			last = last->next;
+		last->next = new;
+	}
+}
+
+
+===== File: ./src/utils/str_join.c =====
+
+
+
+===== File: ./src/utils/malloc_helpers.c =====
+
+
+
+===== File: ./src/utils/str_utils.c =====
+
+
+
+===== File: ./src/utils/error.c =====
+
+
+
+===== File: ./src/utils/free_utils.c =====
+
+
+
+===== File: ./src/exec/exec_path.c =====
+
+
+
+===== File: ./src/exec/wait.c =====
+
+
+
+===== File: ./src/exec/pipes.c =====
+
+
+
+===== File: ./src/exec/exec_utils.c =====
+
+
+
+===== File: ./src/exec/exec_pipeline.c =====
+#include "exec.h"
+
+int execute_pipeline(t_cmd *cmds, t_shell *shell)
+{
+	(void)cmds;
+	(void)shell;
+	return (0);
+}
+
+
+
+===== File: ./src/exec/exec_fork.c =====
+
+
+
+===== File: ./src/redir/redir_main.c =====
+
+
+
+===== File: ./src/redir/redir_output.c =====
+
+
+
+===== File: ./src/redir/redir_apply.c =====
+
+
+
+===== File: ./src/redir/redir_input.c =====
+
+
+
+===== File: ./src/redir/heredoc.c =====
+
+
+
+===== File: ./src/signals/signal_echoctl.c =====
+
+
+
+===== File: ./src/signals/signal_init.c =====
+#include "signals.h"
+#include <signal.h>
+#include <readline/readline.h>
+#include <unistd.h>
+
+static void	handle_sigint(int sig)
+{
+	(void)sig;
+	rl_on_new_line();
+	// rl_replace_line("", 0);
+	write(1, "\n", 1);
+	rl_redisplay();
+}
+
+void	init_signals(void)
+{
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, SIG_IGN);
+}
+
+void	reset_signals(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+}
+
+
+
+===== File: ./src/signals/signal_global.c =====
+
+
+
+===== File: ./src/signals/signal_handlers.c =====
+
+
+

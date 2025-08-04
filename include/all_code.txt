@@ -1,0 +1,532 @@
+===== File: ./quotes.h =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   quotes.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/26 20:18:16 by procha-r          #+#    #+#             */
+/*   Updated: 2025/05/26 20:18:17 by procha-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef QUOTES_H
+# define QUOTES_H
+
+int		contains_unclosed_quotes(const char *s);
+int		quotes_balanced(const char *line);
+char	*remove_quotes(const char *str);
+int		is_quoted_segment(const char *s, int i);
+int		quote_type(char c);
+int		is_quote(char c);
+
+#endif
+
+
+===== File: ./cleanup.h =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cleanup.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/26 20:14:37 by procha-r          #+#    #+#             */
+/*   Updated: 2025/05/26 20:20:41 by procha-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef CLEANUP_H
+# define CLEANUP_H
+
+# include "parser.h"
+# include "env.h"
+# include "exec.h"
+
+void	free_command(t_cmd *cmd);
+void	free_command_list(t_cmd *cmd);
+void	free_redirections(t_redir *redir);
+void	free_env_list(t_env *env);
+void	free_shell(t_shell *shell);
+void	exit_clean(t_shell *shell, int code);
+void	deep_cleanup_on_error(t_shell *shell);
+void	free_token_list(t_token *head);
+void	free_split(char **arr);
+
+#endif
+
+
+
+===== File: ./env.h =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env.h                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/26 20:01:03 by procha-r          #+#    #+#             */
+/*   Updated: 2025/06/06 18:28:04 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef ENV_H
+# define ENV_H
+
+# include <unistd.h>
+# include "libft.h"
+typedef struct s_env
+{
+	char			*key;
+	char			*value;
+	struct s_env	*next;
+}	t_env;
+
+t_env	*init_env_from_environ(char **envp);
+char	*get_env_value(t_env *env, const char *key);
+int		set_env_value(t_env **env, const char *key, const char *value);
+int		unset_env_value(t_env **env, const char *key);
+int		env_key_exists(t_env *env, const char *key);
+int		is_valid_env_key(const char *key);
+int		env_has_key(t_env *env, const char *key);
+void	add_env_node(t_env **env, char *key, char *value);
+t_env	*new_env_node(char *key, char *value);
+void	free_env_list(t_env *env);
+void	print_env_list(t_env *env);
+char	**env_to_str_array(t_env *env);
+
+#endif
+
+
+
+===== File: ./utils.h =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/26 20:15:20 by procha-r          #+#    #+#             */
+/*   Updated: 2025/05/26 20:22:22 by procha-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef UTILS_H
+# define UTILS_H
+
+# include <stddef.h>
+
+char	*safe_strdup(const char *s);
+void	*safe_malloc(size_t size);
+void	*safe_calloc(size_t count, size_t size);
+void	print_error(const char *msg);
+void	print_strs(char **arr);
+int		ft_atoi_strict(const char *str, int *out);
+char	*ft_strjoin_free(char *s1, char *s2);
+char	*ft_strdup_range(const char *src, int start, int end);
+int		count_char(const char *str, char c);
+int		split_len(char **arr);
+
+#endif
+
+
+
+===== File: ./input.h =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   input.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/26 20:17:51 by procha-r          #+#    #+#             */
+/*   Updated: 2025/05/26 20:24:13 by procha-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef INPUT_H
+# define INPUT_H
+
+# include <readline/readline.h>
+# include <readline/history.h>
+# include <stdlib.h>
+# include <unistd.h>
+
+char	*read_user_input(void);
+void	display_prompt(void);
+void	free_user_input(char *line);
+int		is_interactive_shell(void);
+void	init_readline(void);
+
+#endif
+
+
+
+===== File: ./expansion.h =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expansion.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/26 20:13:32 by procha-r          #+#    #+#             */
+/*   Updated: 2025/05/26 20:14:22 by procha-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef EXPANSION_H
+# define EXPANSION_H
+
+# include "env.h"
+# include "utils.h"
+
+char	*expand_variables(const char *line, t_env *env, int last_status);
+char	*expand_var_token(const char *token, t_env *env);
+char	*expand_exit_status(const char *line, int status);
+int		is_expandable(char c);
+char	*extract_var_key(const char *line, int *len);
+char	*expand_env_value(const char *key, t_env *env);
+char	*get_env_value(t_env *env, const char *key);
+
+#endif
+
+
+
+===== File: ./builtin.h =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/26 20:11:49 by procha-r          #+#    #+#             */
+/*   Updated: 2025/05/26 20:39:05 by procha-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef BUILTIN_H
+# define BUILTIN_H
+
+# include "minishell.h"
+# include "env.h"
+# include "parser.h"
+
+typedef struct s_shell	t_shell;
+typedef struct s_cmd	t_cmd;
+typedef int				(*t_builtin_fn)(t_cmd *cmd, t_shell *shell);
+
+int						is_builtin(t_cmd *cmd);
+int						execute_builtin(t_cmd *cmd, t_shell *shell);
+
+int						builtin_echo(t_cmd *cmd);
+int						check_echo_flag(char *arg);
+int						builtin_cd(t_cmd *cmd, t_shell *shell);
+int						update_pwd(t_shell *shell);
+int						update_oldpwd(t_shell *shell);
+int						change_dir(const char *path, t_shell *shell);
+int						builtin_pwd(void);
+int						builtin_env(t_cmd *cmd, t_env *env);
+int						builtin_export(t_cmd *cmd, t_shell *shell);
+int						validate_export_argument(const char *s);
+int						export_variable(const char *arg, t_shell *shell);
+void					sort_and_print_env(t_env *env);
+void					export_print_sorted(t_env *env);
+int						builtin_unset(t_cmd *cmd, t_shell *shell);
+int						builtin_exit(t_cmd *cmd, t_shell *shell);
+int						is_valid_exit_code_arg(const char *arg);
+int						count_args(t_cmd *cmd);
+
+#endif
+
+
+
+===== File: ./parser.h =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/26 20:03:09 by procha-r          #+#    #+#             */
+/*   Updated: 2025/06/06 18:27:01 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef PARSER_H
+# define PARSER_H
+
+# include "tokenizer.h"
+# include "env.h"
+
+typedef struct s_redir	t_redir;
+
+typedef struct s_cmd
+{
+	char			**argv;
+	t_redir			*redir;
+	int				pipe_in;
+	int				pipe_out;
+	int				is_builtin;
+	struct s_cmd	*next;
+}	t_cmd;
+
+t_cmd	*parse_tokens_to_cmds(t_token *tokens);
+t_cmd	*new_command(void);
+void	add_command(t_cmd **cmds, t_cmd *new_cmd);
+void	free_command_list(t_cmd *cmds);
+int		count_command_segments(t_token *tokens);
+int		command_needs_pipe(t_token *tokens);
+int		command_is_empty(t_cmd *cmd);
+int		is_redirection_token(t_token *token);
+void	ft_add_arg(char ***argv, const char *value);
+
+#endif
+
+
+
+===== File: ./minishell.h =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/26 20:01:03 by procha-r          #+#    #+#             */
+/*   Updated: 2025/06/06 11:48:17 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef MINISHELL_H
+# define MINISHELL_H
+
+# include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <string.h>
+# include <fcntl.h>
+# include <errno.h>
+# include <signal.h>
+# include <readline/readline.h>
+# include <readline/history.h>
+
+# include "tokenizer.h"
+# include "parser.h"
+# include "redir.h"
+# include "exec.h"
+# include "builtin.h"
+# include "env.h"
+# include "cleanup.h"
+# include "utils.h"
+# include "input.h"
+
+typedef struct s_env	t_env;
+typedef struct s_cmd	t_cmd;
+
+typedef struct s_shell
+{
+	t_env	*env;
+	int		last_exit_code;
+	int		is_running;
+}	t_shell;
+
+int		main(int argc, char **argv, char **envp);
+int		shell_loop(t_shell *shell);
+void	free_shell(t_shell *shell);
+void	exit_clean(t_shell *shell, int code);
+void	deep_cleanup_on_error(t_shell *shell);
+
+#endif
+
+
+
+===== File: ./signals.h =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signals.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/26 20:14:00 by procha-r          #+#    #+#             */
+/*   Updated: 2025/05/26 20:15:00 by procha-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef SIGNALS_H
+# define SIGNALS_H
+
+void	init_signals(void);
+void	reset_signals(void);
+void	signal_handler_parent(int sig);
+void	signal_handler_child(int sig);
+void	enable_echoctl(void);
+void	disable_echoctl(void);
+void	set_signal_code(int code);
+int		get_signal_code(void);
+
+#endif
+
+
+
+===== File: ./tokenizer.h =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenizer.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/26 20:01:09 by procha-r          #+#    #+#             */
+/*   Updated: 2025/06/06 12:22:35 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef TOKENIZER_H
+# define TOKENIZER_H
+
+# include <stdlib.h>
+
+typedef enum e_token_type
+{
+	TOKEN_WORD = 0,
+	TOKEN_PIPE,
+	TOKEN_REDIR_IN,
+	TOKEN_REDIR_OUT,
+	TOKEN_REDIR_APPEND,
+	TOKEN_HEREDOC,
+	TOKEN_AND_IF,
+	TOKEN_OR_IF,
+	TOKEN_LPAREN,
+	TOKEN_RPAREN,
+	TOKEN_EOF,
+	TOKEN_UNKNOWN
+}	t_token_type;
+
+typedef struct s_token
+{
+	char			*value;
+	int				type;
+	struct s_token	*next;
+}	t_token;
+
+t_token	*tokenize_input(const char *line);
+t_token	*new_token(const char *value, int type);
+void	add_token(t_token **list, t_token *new_token);
+void	free_token_list(t_token *head);
+int		is_metachar(char c);
+int		is_operator(char c);
+int		is_quote(char c);
+int		is_space(char c);
+int		is_end_of_token(char c);
+int		token_type(const char *str);
+int		is_word(const char *s);
+void	print_tokens_debug(t_token *tokens);
+
+#endif
+
+
+
+===== File: ./exec.h =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec.h                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/26 20:12:24 by procha-r          #+#    #+#             */
+/*   Updated: 2025/05/26 20:14:19 by procha-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef EXEC_H
+# define EXEC_H
+
+# include "minishell.h"
+# include "parser.h"
+# include "env.h"
+# include <sys/wait.h>
+
+typedef struct s_cmd		t_cmd;
+typedef struct s_shell		t_shell;
+
+typedef struct s_io_backup
+{
+	int	stdin_fd;
+	int	stdout_fd;
+}	t_io_backup;
+
+int		execute_pipeline(t_cmd *cmds, t_shell *shell);
+int		execute_single_command(t_cmd *cmd, t_shell *shell);
+int		spawn_child_process(t_cmd *cmd, t_shell *shell, int *fds, int is_last);
+void	child_process_exec(t_cmd *cmd, t_shell *shell, int is_last);
+char	*resolve_command_path(char *cmd, t_env *env);
+int		is_path_absolute_or_relative(const char *cmd);
+int		is_valid_executable(const char *path);
+int		launch_execve(t_cmd *cmd, t_shell *shell);
+void	handle_exec_error(const char *msg);
+int		setup_pipes(t_cmd *cmds, int ***pipes);
+void	close_all_pipes(int **pipes, int count);
+void	free_pipe_fds(int **pipes, int count);
+int		wait_for_all(t_cmd *cmds);
+void	update_exit_code_from_status(int status);
+
+#endif
+
+
+
+===== File: ./redir.h =====
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redir.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/26 20:10:09 by procha-r          #+#    #+#             */
+/*   Updated: 2025/06/06 12:30:16 by pedroribeir      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef REDIR_H
+# define REDIR_H
+
+# include <unistd.h>
+# include "parser.h"
+typedef struct s_redir
+{
+	int				type;
+	char			*target;
+	struct s_redir	*next;
+}	t_redir;
+
+typedef struct s_heredoc_state
+{
+	int		tmp_fd;
+	char	*delimiter;
+	int		pipe_fd[2];
+	int		should_expand;
+}	t_heredoc_state;
+
+int		handle_redirections(t_cmd *cmd);
+int		setup_redir_input(t_redir *redir);
+int		open_input_file(const char *filename);
+int		setup_redir_output(t_redir *redir);
+int		open_output_file(const char *filename, int append);
+int		setup_heredoc_pipe(char *delimiter, int *fd);
+int		read_heredoc_input(const char *delim, int fd[2]);
+int		create_heredoc(const char *delimiter);
+void	close_redirections(t_cmd *cmd);
+void	apply_redirections(t_cmd *cmd);
+int		handle_redir_error(const char *msg);
+
+#endif
+
+
+
