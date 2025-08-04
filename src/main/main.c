@@ -15,27 +15,14 @@
 int	main(int argc, char **argv, char **envp)
 {
 	t_shell	shell;
-	char	*line;
-	t_token	*tokens;
-	t_cmd	*cmds;
 
 	(void)argc;
 	(void)argv;
-	shell.env = init_env_from_environ(envp);
-	shell.last_exit_code = 0;
-	shell.is_running = 1;
-	while (shell.is_running)
-	{
-		line = read_user_input();
-		if (!line)
-			break ;
-		tokens = tokenize_input(line);
-		cmds = parse_tokens_to_cmds(tokens);
-		if (cmds)
-			execute_pipeline(cmds, &shell);
-		free_command_list(cmds);
-		free_token_list(tokens);
-		free(line);
-	}
-	exit_clean(&shell, 0);
+    (void)argc;
+    (void)argv;
+    shell.env = init_env_from_environ(envp);
+    shell.last_exit_code = 0;
+    shell_loop(&shell);
+    exit_clean(&shell, 0);
+    return (0);
 }
