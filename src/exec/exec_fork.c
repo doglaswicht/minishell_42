@@ -6,7 +6,7 @@
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:53:43 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/05 16:53:44 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/06 01:23:02 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,17 +73,40 @@ int spawn_child_process(t_cmd *cmd, t_shell *shell, int *fds, int is_last)
     return (pid);
 }
 
+static void     restore_stdio(int saved[2])
+{
+    if (saved[0] >= 0)
+    {
+        dup2(saved[0], STDIN_FILENO);
+        close(saved[0]);
+    }
+    if (saved[1] >= 0)
+    {
+        dup2(saved[1], STDOUT_FILENO);
+        close(saved[1]);
+    }
+}
+
 int execute_single_command(t_cmd *cmd, t_shell *shell)
 {
     pid_t   pid;
     int     status;
     int     fds[2];
+    int     saved[2];
 
     if (!cmd)
         return (0);
     if (is_builtin(cmd))
     {
+        saved[0] = dup(STDIN_FILENO);
+        saved[1] = dup(STDOUT_FILENO);
+        if (saved[0] < 0 || saved[1] < 0 || handle_redirections(cmd) < 0)
+        {
+            restore_stdio(saved);
+            return (shell->last_exit_code = 1);
+        }
         shell->last_exit_code = execute_builtin(cmd, shell);
+        restore_stdio(saved);
         return (shell->last_exit_code);
     }
     fds[0] = STDIN_FILENO;
