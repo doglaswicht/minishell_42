@@ -18,10 +18,18 @@
 # include <stdlib.h>
 # include <unistd.h>
 
-char	*read_user_input(void);
-void	display_prompt(void);
-void	free_user_input(char *line);
-int		is_interactive_shell(void);
-void	init_readline(void);
+typedef enum e_prompt_state
+{
+        PROMPT_DEFAULT,
+        PROMPT_HEREDOC
+}       t_prompt_state;
+
+void            set_prompt_state(t_prompt_state state);
+t_prompt_state  get_prompt_state(void);
+char            *read_user_input(void);
+void            display_prompt(void);
+void            free_user_input(char *line);
+int                     is_interactive_shell(void);
+void            init_readline(void);
 
 #endif

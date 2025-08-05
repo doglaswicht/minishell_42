@@ -1,8 +1,10 @@
 #include <readline/readline.h>
+#include "input.h"
 
-
-// No need for this function at all
 void	init_readline(void)
 {
-    // rl_catch_signals = 0; // 🔥 REMOVE IT
+    if (!is_interactive_shell())
+        return ;
+    rl_catch_signals = 0;
+    set_prompt_state(PROMPT_DEFAULT);
 }

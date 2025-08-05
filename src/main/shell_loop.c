@@ -25,7 +25,7 @@ static void process_line(char *line, t_shell *shell)
         execute_pipeline(cmds, shell);
     free_command_list(cmds);
     free_token_list(tokens);
-    free(line);
+    free_user_input(line);
 }
 
 int shell_loop(t_shell *shell)

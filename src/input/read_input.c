@@ -2,17 +2,18 @@
 #include <stdlib.h>
 #include "input.h"
 
-char	*read_user_input(void)
+char    *read_user_input(void)
 {
-	char	*line;
+	char    *line;
 
-	line = readline(" minishell$ ");
-	if (!line)
-	{
-		write(1, "exit\n", 5);
-		return (NULL);
-	}
-	if (*line)
-		add_history(line);
-	return (line);
+    set_prompt_state(PROMPT_DEFAULT);
+    display_prompt();
+    line = readline(NULL);
+    if (!line)
+    {
+            if (is_interactive_shell())
+                    write(1, "exit\n", 5);
+            return (NULL);
+    }
+    return (line);
 }
