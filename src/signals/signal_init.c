@@ -1,25 +1,18 @@
 #include "signals.h"
 #include <signal.h>
-#include <readline/readline.h>
-#include <unistd.h>
 
-static void	handle_sigint(int sig)
-{
-	(void)sig;
-	rl_on_new_line();
-	// rl_replace_line("", 0);
-	write(1, "\n", 1);
-	rl_redisplay();
-}
 
-void	init_signals(void)
+void    init_signals(void)
 {
-	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, SIG_IGN);
+	disable_echoctl();
+    signal(SIGINT, signal_handler_parent);
+    signal(SIGQUIT, signal_handler_parent);
+    set_signal_code(0);
 }
 
 void	reset_signals(void)
 {
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
+	enable_echoctl();
+    signal(SIGINT, signal_handler_child);
+    signal(SIGQUIT, signal_handler_child);
 }

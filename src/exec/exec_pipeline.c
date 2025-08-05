@@ -2,116 +2,57 @@
 #include "builtin.h"
 #include <unistd.h>
 #include <stdlib.h>
-#include <stdio.h>
 
+int     **g_pipes = NULL;
+int     g_pipe_count = 0;
 
-static int  child_exec(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
+static int  count_cmds(t_cmd *cmds)
 {
-    char    *path;
-    char    **envp;
+    int count;
 
-    if (in_fd != STDIN_FILENO)
-    {
-        dup2(in_fd, STDIN_FILENO);
-        close(in_fd);
+    count = 0;
+    while (cmds)
+     {
+        count++;
+        cmds = cmds->next;
     }
-    if (out_fd != STDOUT_FILENO)
-    {
-        dup2(out_fd, STDOUT_FILENO);
-        close(out_fd);
-    }
-    if (is_builtin(cmd))
-    {
-        int status = execute_builtin(cmd, shell);
-        exit(status);
-    }
-    path = resolve_command_path(cmd->argv[0], shell->env);
-    envp = env_to_str_array(shell->env);
-    if (!path)
-    {
-        fprintf(stderr, "%s: command not found\n", cmd->argv[0]);
-        if (envp)
-        {
-            int i = 0; while (envp[i]) free(envp[i++]); free(envp);
-        }
-        exit(127);
-    }
-    execve(path, cmd->argv, envp);
-    perror(cmd->argv[0]);
-    if (envp)
-    {
-        int i = 0; while (envp[i]) free(envp[i++]); free(envp);
-    }
-    free(path);
-    exit(126);
+    return (count);
 }
 
 int     execute_pipeline(t_cmd *cmds, t_shell *shell)
 {
-    int     count;
-    t_cmd   *tmp;
+    int     cmd_count;
     int     i;
-    int     prev_fd;
-    int     pipe_fd[2];
-    pid_t   *pids;
-    int     status;
+    int     fds[2];
+    t_cmd   *tmp;
 
     if (!cmds)
         return (0);
+    cmd_count = count_cmds(cmds);
+    if (cmd_count == 1)
+        return (execute_single_command(cmds, shell));
+    g_pipe_count = setup_pipes(cmds, &g_pipes);
+    if (g_pipe_count < 0)
+        return (1);
     tmp = cmds;
-    count = 0;
+    i = 0;
     while (tmp)
     {
-        count++;
+        fds[0] = (i == 0) ? STDIN_FILENO : g_pipes[i - 1][0];
+        fds[1] = (i == g_pipe_count) ? STDOUT_FILENO : g_pipes[i][1];
+        if (spawn_child_process(tmp, shell, fds, i == g_pipe_count) < 0)
+        {
+            close_all_pipes(g_pipes, g_pipe_count);
+            free_pipe_fds(g_pipes, g_pipe_count);
+            return (1);
+        }
         tmp = tmp->next;
-    }
-    if (count == 1 && is_builtin(cmds))
-    {
-        shell->last_exit_code = execute_builtin(cmds, shell);
-        return (shell->last_exit_code);
-    }
-    pids = malloc(sizeof(pid_t) * count);
-    if (!pids)
-        return (1);
-    prev_fd = STDIN_FILENO;
-    i = 0;
-    while (cmds)
-    {
-        if (cmds->next)
-        {
-            if (pipe(pipe_fd) == -1)
-                return (free(pids), perror("pipe"), 1);
-        }
-        pids[i] = fork();
-        if (pids[i] == 0)
-        {
-            if (cmds->next)
-                close(pipe_fd[0]);
-            child_exec(cmds, shell, prev_fd,
-                cmds->next ? pipe_fd[1] : STDOUT_FILENO);
-        }
-        if (prev_fd != STDIN_FILENO)
-            close(prev_fd);
-        if (cmds->next)
-        {
-            close(pipe_fd[1]);
-            prev_fd = pipe_fd[0];
-        }
-        i++;
-        cmds = cmds->next;
-    }
-    if (prev_fd != STDIN_FILENO)
-        close(prev_fd);
-    i = 0;
-    while (i < count)
-    {
-        waitpid(pids[i], &status, 0);
         i++;
     }
-    free(pids);
-    if (WIFEXITED(status))
-        shell->last_exit_code = WEXITSTATUS(status);
-    else if (WIFSIGNALED(status))
-        shell->last_exit_code = 128 + WTERMSIG(status);
+    close_all_pipes(g_pipes, g_pipe_count);
+    shell->last_exit_code = wait_for_all(cmds);
+    free_pipe_fds(g_pipes, g_pipe_count);
+    g_pipes = NULL;
+    g_pipe_count = 0;
     return (shell->last_exit_code);
 }
