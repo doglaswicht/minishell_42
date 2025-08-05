@@ -58,6 +58,7 @@ SRCS	= \
 	src/redir/redir_output.c \
 	src/redir/heredoc.c \
 	src/redir/redir_apply.c \
+	src/redir/redir_error.c \
 	src/exec/exec_pipeline.c \
 	src/exec/exec_fork.c \
 	src/exec/exec_utils.c \

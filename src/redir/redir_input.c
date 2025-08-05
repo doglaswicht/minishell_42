@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/05 16:56:45 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/05 16:56:46 by dleite-b         ###   ########.fr       */
+/*   Created: 2025/08/06 01:09:31 by dleite-b          #+#    #+#             */
+/*   Updated: 2025/08/06 01:10:55 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,14 @@
 ** open_input_file
 ** ------------------------------------------------------------
 ** Wrapper around open() for input files.  Returns the file
-** descriptor on success or -1 on failure while printing the
-** corresponding error using perror.
+** descriptor on success or -1 on failure.
 */
 int open_input_file(const char *filename)
 {
-    int fd;
-
-    fd = open(filename, O_RDONLY);
-    if (fd < 0)
-        perror(filename);
-    return (fd);
+  
+    if (!filename)
+        return (-1);
+    return (open(filename, O_RDONLY));
 }
 
 /*
@@ -44,6 +41,8 @@ int setup_redir_input(t_redir *redir)
 {
     int fd;
 
+    if (!redir || !redir->target)
+        return (handle_redir_error("redirection"));
     if (redir->type == TOKEN_REDIR_IN)
         fd = open_input_file(redir->target);
     else if (redir->type == TOKEN_HEREDOC)
@@ -51,12 +50,12 @@ int setup_redir_input(t_redir *redir)
     else
         return (0);
     if (fd < 0)
-        return (-1);
+        return (handle_redir_error(redir->target));
     if (dup2(fd, STDIN_FILENO) < 0)
     {
         perror("dup2");
         close(fd);
-        return (-1);
+        return (handle_redir_error("dup2"));
     }
     close(fd);
     return (0);
