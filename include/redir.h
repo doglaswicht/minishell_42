@@ -30,16 +30,15 @@ typedef struct s_heredoc_state
 	int		should_expand;
 }	t_heredoc_state;
 
-int		handle_redirections(t_cmd *cmd);
-int		setup_redir_input(t_redir *redir);
-int		open_input_file(const char *filename);
-int		setup_redir_output(t_redir *redir);
-int		open_output_file(const char *filename, int append);
-int		setup_heredoc_pipe(char *delimiter, int *fd);
-int		read_heredoc_input(const char *delim, int fd[2]);
-int		create_heredoc(const char *delimiter);
-void	close_redirections(t_cmd *cmd);
-void	apply_redirections(t_cmd *cmd);
-int		handle_redir_error(const char *msg);
+int             handle_redirections(t_cmd *cmd);
+int             redir_apply(t_redir *redir);
+int             setup_redir_input(t_redir *redir);
+int             open_input_file(const char *filename);
+int             setup_redir_output(t_redir *redir);
+int             open_output_file(const char *filename, int append);
+int             heredoc(const char *delimiter);
+void    close_redirections(t_cmd *cmd);
+void    apply_redirections(t_cmd *cmd);
+int             handle_redir_error(const char *msg);
 
 #endif
