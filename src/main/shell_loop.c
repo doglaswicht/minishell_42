@@ -6,11 +6,12 @@
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:54:56 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/05 16:54:58 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/05 17:50:50 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "expansion.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -18,14 +19,19 @@ static void process_line(char *line, t_shell *shell)
 {
     t_token *tokens;
     t_cmd   *cmds;
+    char    *expanded;
 
-    tokens = tokenize_input(line);
+    expanded = expand_variables(line, shell->env, shell->last_exit_code);
+    free_user_input(line);
+    if (!expanded)
+        return ;
+    tokens = tokenize_input(expanded);
     cmds = parse_tokens_to_cmds(tokens);
     if (cmds)
         execute_pipeline(cmds, shell);
     free_command_list(cmds);
     free_token_list(tokens);
-    free_user_input(line);
+    free_user_input(expanded);
 }
 
 int shell_loop(t_shell *shell)

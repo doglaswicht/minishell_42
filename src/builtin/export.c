@@ -6,7 +6,7 @@
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:52:53 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/05 17:41:37 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/05 17:50:52 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,6 @@ static void sort_env_array(t_env **arr, int size)
 
 void    sort_and_print_env(t_env *env)
 {
-
     int     size;
     int     i;
     t_env   **arr;
