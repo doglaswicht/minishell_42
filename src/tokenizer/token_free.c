@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_free.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 12:15:18 by pedroribeir       #+#    #+#             */
-/*   Updated: 2025/07/24 00:28:02 by pedroribeir      ###   ########.fr       */
+/*   Updated: 2025/08/05 16:57:32 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

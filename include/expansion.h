@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 20:13:32 by procha-r          #+#    #+#             */
-/*   Updated: 2025/08/01 16:50:02 by pedroribeir      ###   ########.fr       */
+/*   Updated: 2025/08/05 16:48:28 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

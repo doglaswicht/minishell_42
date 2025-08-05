@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 20:01:09 by procha-r          #+#    #+#             */
-/*   Updated: 2025/07/27 12:38:54 by pedroribeir      ###   ########.fr       */
+/*   Updated: 2025/08/05 16:51:57 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

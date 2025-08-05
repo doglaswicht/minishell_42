@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 20:01:03 by procha-r          #+#    #+#             */
-/*   Updated: 2025/06/06 11:48:17 by pedroribeir      ###   ########.fr       */
+/*   Updated: 2025/08/05 16:48:38 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

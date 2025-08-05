@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cleanup.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 15:20:07 by pedroribeir       #+#    #+#             */
-/*   Updated: 2025/08/04 15:21:53 by pedroribeir      ###   ########.fr       */
+/*   Updated: 2025/08/05 16:51:54 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
