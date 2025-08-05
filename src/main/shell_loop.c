@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   shell_loop.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/06 11:51:29 by pedroribeir       #+#    #+#             */
-/*   Updated: 2025/06/06 11:54:35 by pedroribeir      ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "minishell.h"
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -30,18 +18,19 @@ static void process_line(char *line, t_shell *shell)
 
 int shell_loop(t_shell *shell)
 {
-    char *line;
-    
+    char    *line;
+
+    init_prompt();
     shell->is_running = 1;
-    while (shell->is_running)
+    while (shell->is_running && is_interactive_shell())
     {
         line = read_user_input();
         if (!line)
             break ;
         if (*line)
             add_history(line);
-    
         process_line(line, shell);
+        set_last_status(shell->last_exit_code);
     }
-    return(0);
+    return (0);
 }

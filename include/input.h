@@ -24,12 +24,15 @@ typedef enum e_prompt_state
         PROMPT_HEREDOC
 }       t_prompt_state;
 
+void            init_prompt(void);
 void            set_prompt_state(t_prompt_state state);
 t_prompt_state  get_prompt_state(void);
+void            set_last_status(int status);
+int             get_last_status(void);
 char            *read_user_input(void);
 void            display_prompt(void);
 void            free_user_input(char *line);
-int                     is_interactive_shell(void);
+int             is_interactive_shell(void);
 void            init_readline(void);
 
 #endif

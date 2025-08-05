@@ -1,31 +1,60 @@
 #include "input.h"
+#include "libft.h"
 #include <unistd.h>
 
-static t_prompt_state  g_prompt_state = PROMPT_DEFAULT;
+typedef struct s_prompt_info
+{
+    t_prompt_state  mode;
+    int             last_status;
+    int             interactive;
+}   t_prompt_info;
+
+static t_prompt_info g_prompt = {PROMPT_DEFAULT, 0, 0};
+
+void    init_prompt(void)
+{
+    g_prompt.mode = PROMPT_DEFAULT;
+    g_prompt.last_status = 0;
+    g_prompt.interactive = isatty(STDIN_FILENO);
+}
 
 t_prompt_state  get_prompt_state(void)
 {
-        return (g_prompt_state);
+    return (g_prompt.mode);
 }
 
 void    set_prompt_state(t_prompt_state state)
 {
-        g_prompt_state = state;
+    g_prompt.mode = state;
+}
+
+void    set_last_status(int status)
+{
+    g_prompt.last_status = status;
+}
+
+int     get_last_status(void)
+{
+    return (g_prompt.last_status);
 }
 
 int     is_interactive_shell(void)
 {
-        return (isatty(STDIN_FILENO));
+    return (g_prompt.interactive);
 }
 
 void    display_prompt(void)
 {
-        if (!is_interactive_shell())
-                return ;
-        if (g_prompt_state == PROMPT_HEREDOC)
-                write(STDOUT_FILENO, "> ", 2);
-        else
-                write(STDOUT_FILENO, " minishell$ ", 12);
+    if (!g_prompt.interactive)
+        return ;
+    if (g_prompt.mode == PROMPT_HEREDOC)
+        write(STDOUT_FILENO, "> ", 2);
+    else
+    {
+        ft_putstr_fd("[", STDOUT_FILENO);
+        ft_putnbr_fd(g_prompt.last_status, STDOUT_FILENO);
+        ft_putstr_fd("] minishell$ ", STDOUT_FILENO);
+    }
 }
 
 void    free_user_input(char *line)
