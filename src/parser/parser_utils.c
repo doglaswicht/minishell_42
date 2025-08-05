@@ -11,57 +11,50 @@
 /* ************************************************************************** */
 
 #include "parser.h"
+#include "cleanup.h"
 #include "libft.h"
 #include <stdlib.h>
 
-void	free_command_list(t_cmd *cmds)
+void    free_command_list(t_cmd *cmds)
 {
-	    t_cmd   *tmp;
-    size_t  i;
+    t_cmd   *tmp;
 
     while (cmds)
     {
         tmp = cmds->next;
-        if (cmds->argv)
-        {
-            i = 0;
-            while (cmds->argv[i])
-                free(cmds->argv[i++]);
-            free(cmds->argv);
-        }
-        free(cmds);
+        free_command(cmds);
         cmds = tmp;
     }
 }
 
-void	ft_add_arg(char ***argv, const char *value)
+void    ft_add_arg(char ***argv, const char *value)
 {
-	size_t	len;
-	char	**new_argv;
-	size_t	i;
-
-	if (!value)
-		return ;
-	len = 0;
-	while (*argv && (*argv)[len])
-		len++;
-	new_argv = malloc(sizeof(char *) * (len + 2));
-	if (!new_argv)
-		return ;
-	i = 0;
-	while (*argv && (*argv)[i])
-	{
-		new_argv[i] = ft_strdup((*argv)[i]);
-		i++;
-	}
-	new_argv[i++] = ft_strdup(value);
-	new_argv[i] = NULL;
-	if (*argv)
-	{
-		i = 0;
-		while ((*argv)[i])
-			free((*argv)[i++]);
-		free(*argv);
-	}
-	*argv = new_argv;
+        size_t  len;
+        char    **new_argv;
+        size_t  i;
+		
+        if (!value)
+                return ;
+        len = 0;
+        while (*argv && (*argv)[len])
+                len++;
+        new_argv = malloc(sizeof(char *) * (len + 2));
+        if (!new_argv)
+                return ;
+        i = 0;
+        while (*argv && (*argv)[i])
+        {
+                new_argv[i] = ft_strdup((*argv)[i]);
+                i++;
+        }
+        new_argv[i++] = ft_strdup(value);
+        new_argv[i] = NULL;
+        if (*argv)
+        {
+                i = 0;
+                while ((*argv)[i])
+                        free((*argv)[i++]);
+                free(*argv);
+        }
+        *argv = new_argv;
 }
