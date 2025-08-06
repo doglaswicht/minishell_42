@@ -49,7 +49,7 @@ static int	handle_builtin_execution(t_cmd *cmd, t_shell *shell)
 
 int	execute_single_command(t_cmd *cmd, t_shell *shell)
 {
-	pid_t		pid;
+	pid_t	pid;
 	int		status;
 	int		fds[2];
 

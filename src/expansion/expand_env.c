@@ -20,16 +20,16 @@
 ** list.  If the key does not exist an empty string is returned.  The returned
 ** string is dynamically allocated and must be freed by the caller.
 */
-char    *expand_env_value(const char *key, t_env *env)
+char	*expand_env_value(const char *key, t_env *env)
 {
-    char    *value;
+	char	*value;
 
-    if (!key)
-        return (safe_strdup(""));
-    value = get_env_value(env, key);
-    if (!value)
-        return (safe_strdup(""));
-    return (safe_strdup(value));
+	if (!key)
+		return (safe_strdup(""));
+	value = get_env_value(env, key);
+	if (!value)
+		return (safe_strdup(""));
+	return (safe_strdup(value));
 }
 
 /*
@@ -39,18 +39,18 @@ char    *expand_env_value(const char *key, t_env *env)
 ** does not start with '$' it is duplicated as-is.  The returned string is
 ** dynamically allocated and must be freed by the caller.
 */
-char    *expand_var_token(const char *token, t_env *env)
+char	*expand_var_token(const char *token, t_env *env)
 {
-    char    *key;
-    char    *value;
-    int     len;
+	char	*key;
+	char	*value;
+	int	len;
 
-    if (!token)
-        return (NULL);
-    if (token[0] != '$')
-        return (safe_strdup(token));
-    key = extract_var_key(token + 1, &len);
-    value = expand_env_value(key, env);
-    free(key);
-    return (value);
+	if (!token)
+		return (NULL);
+	if (token[0] != '$')
+		return (safe_strdup(token));
+	key = extract_var_key(token + 1, &len);
+	value = expand_env_value(key, env);
+	free(key);
+	return (value);
 }

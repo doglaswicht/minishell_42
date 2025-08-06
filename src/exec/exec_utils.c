@@ -13,8 +13,8 @@
 #include "exec.h"
 #include <stdio.h>
 
-void    handle_exec_error(const char *msg)
+void	handle_exec_error(const char *msg)
 {
-    if (msg)
-        perror(msg);
+	if (msg)
+		perror(msg);
 }

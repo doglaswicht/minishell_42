@@ -14,69 +14,84 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int setup_pipes(t_cmd *cmds, int ***pipes)
+static int	count_commands(t_cmd *cmds)
 {
-    int     count;
-    int     i;
+	int	count;
 
-    *pipes = NULL;
-    count = 0;
-    while (cmds)
-    {
-        count++;
-        cmds = cmds->next;
-    }
-    count -= 1;
-    if (count <= 0)
-        return (0);
-    *pipes = malloc(sizeof(int *) * count);
-    if (!*pipes)
-        return (-1);
-    i = 0;
-    while (i < count)
-    {
-        (*pipes)[i] = malloc(sizeof(int) * 2);
-        if (!(*pipes)[i])
-        {
-            free_pipe_fds(*pipes, i);
-            return (-1);
-        }
-        if (pipe((*pipes)[i]) == -1)
-        {
-            free_pipe_fds(*pipes, i + 1);
-            return (-1);
-        }
-        i++;
-    }
-    return (count);
+	count = 0;
+	while (cmds)
+	{
+		count++;
+		cmds = cmds->next;
+	}
+	return (count - 1);
 }
 
-void    close_all_pipes(int **pipes, int count)
+static int	allocate_pipes(int ***pipes, int count)
 {
-    int i;
+	int	i;
 
-    if (!pipes)
-        return ;
-    i = 0;
-    while (i < count)
-    {
-        close(pipes[i][0]);
-        close(pipes[i][1]);
-        i++;
-    }
+	*pipes = malloc(sizeof(int *) * count);
+	if (!*pipes)
+		return (-1);
+	i = 0;
+	while (i < count)
+	{
+		(*pipes)[i] = malloc(sizeof(int) * 2);
+		if (!(*pipes)[i])
+		{
+			free_pipe_fds(*pipes, i);
+			return (-1);
+		}
+		if (pipe((*pipes)[i]) == -1)
+		{
+			free_pipe_fds(*pipes, i + 1);
+			return (-1);
+		}
+		i++;
+	}
+	return (0);
 }
 
-void    free_pipe_fds(int **pipes, int count)
+int	setup_pipes(t_cmd *cmds, int ***pipes)
 {
-    int i;
+	int	count;
 
-    if (!pipes)
-        return ;
-    i = 0;
-    while (i < count)
-    {
-        free(pipes[i]);
-        i++;
-    }
-    free(pipes);
+	*pipes = NULL;
+	count = count_commands(cmds);
+	if (count <= 0)
+		return (0);
+	if (allocate_pipes(pipes, count) == -1)
+		return (-1);
+	return (count);
+}
+
+void	close_all_pipes(int **pipes, int count)
+{
+	int	i;
+
+	if (!pipes)
+		return ;
+	i = 0;
+	while (i < count)
+	{
+		close(pipes[i][0]);
+		close(pipes[i][1]);
+		i++;
+	}
+}
+
+void	free_pipe_fds(int **pipes, int count)
+{
+	int	i;
+
+	if (!pipes)
+		return ;
+	i = 0;
+	while (i < count)
+	{
+		free(pipes[i]);
+		i++;
+	}
+	free(pipes);
 }

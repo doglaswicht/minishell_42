@@ -18,10 +18,9 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	
-    shell.env = init_env_from_environ(envp);
-    shell.last_exit_code = 0;
-    shell_loop(&shell);
-    exit_clean(&shell, 0);
-    return (0);
+	shell.env = init_env_from_environ(envp);
+	shell.last_exit_code = 0;
+	shell_loop(&shell);
+	exit_clean(&shell, 0);
+	return (0);
 }

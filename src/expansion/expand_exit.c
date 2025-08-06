@@ -20,8 +20,8 @@
 ** "$?" sequence in the input.  The returned string is dynamically allocated
 ** and must be freed by the caller.
 */
-char    *expand_exit_status(const char *line, int status)
+char	*expand_exit_status(const char *line, int status)
 {
-    (void)line;
-    return (ft_itoa(status));
+	(void)line;
+	return (ft_itoa(status));
 }

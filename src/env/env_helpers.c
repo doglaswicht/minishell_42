@@ -6,12 +6,11 @@
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 14:45:00 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/06 13:31:53 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/06 14:05:54 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "env.h"
-
 
 int	is_valid_env_key(const char *key)
 {

@@ -6,13 +6,13 @@
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:53:35 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/06 13:21:35 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/06 14:07:13 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "env.h"
 
-int     unset_env_value(t_env **env, const char *key)
+int	unset_env_value(t_env **env, const char *key)
 {
 	t_env	*cur;
 	t_env	*prev;
