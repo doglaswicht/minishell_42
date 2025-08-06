@@ -6,7 +6,7 @@
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:53:33 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/06 13:27:47 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/06 13:38:33 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,16 +62,4 @@ int	set_env_value(t_env **env, const char *key, const char *value)
 	}
 	add_env_node((char *)key, (char *)value, env);
 	return (0);
-}
-
-int     env_key_exists(t_env *env, const char *key)
-{
-    while (env)
-    {
-        if (ft_strncmp(env->key, key, ft_strlen(key)) == 0
-            && env->key[ft_strlen(key)] == '\0')
-            return (1);
-        env = env->next;
-    }
-    return (0);
 }
