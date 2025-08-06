@@ -76,7 +76,7 @@ SRCS	= \
 	src/builtin/unset.c \
 	src/builtin/exit.c \
 	src/env/env_init.c \
-	src/env/env_helpers \
+	src/env/env_helpers.c \
 	src/env/env_get.c \
 	src/env/env_set.c \
 	src/env/env_unset.c \
