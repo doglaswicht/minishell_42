@@ -6,22 +6,22 @@
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:56:28 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/05 16:56:29 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/06 15:14:04 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "quotes.h"
 
-int is_quote(char c)
+int	is_quote(char c)
 {
-    return (c == '\'' || c == '"');
+	return (c == '\'' || c == '"');
 }
 
-int quote_type(char c)
+int	quote_type(char c)
 {
-    if (c == '\'')
-        return ('\'');
-    if (c == '"')
-        return ('"');
-    return (0);
+	if (c == '\'')
+		return ('\'');
+	if (c == '"')
+		return ('"');
+	return (0);
 }

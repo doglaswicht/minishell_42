@@ -13,9 +13,9 @@
 #include <stdio.h>
 #include "redir.h"
 
-int handle_redir_error(const char *msg)
+int	handle_redir_error(const char *msg)
 {
-    if (msg)
-        perror(msg);
-    return (-1);
+	if (msg)
+		perror(msg);
+	return (-1);
 }

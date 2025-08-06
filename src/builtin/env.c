@@ -6,15 +6,15 @@
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:52:47 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/05 16:52:48 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/06 15:52:28 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "builtin.h"
 
-int     builtin_env(t_cmd *cmd, t_env *env)
+int	builtin_env(t_cmd *cmd, t_env *env)
 {
-    (void)cmd;
-    print_env_list(env);
-    return (0);
+	(void)cmd;
+	print_env_list(env);
+	return (0);
 }

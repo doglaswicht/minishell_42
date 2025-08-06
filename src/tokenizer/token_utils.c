@@ -6,13 +6,12 @@
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:57:36 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/05 16:57:37 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/06 15:33:38 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "tokenizer.h"  // Para os protótipos das funções que você está implementando
-#include <stdlib.h>     // Para malloc
-
+#include "tokenizer.h"
+#include <stdlib.h>
 
 int	is_space(char c)
 {
@@ -24,8 +23,6 @@ int	is_metachar(char c)
 {
 	return (c == '|' || c == '<' || c == '>');
 }
-
-#include <stdlib.h>
 
 t_token	*new_token(const char *value, t_token_type type)
 {

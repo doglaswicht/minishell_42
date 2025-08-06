@@ -6,7 +6,7 @@
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:53:00 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/05 16:53:01 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/06 16:04:46 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,15 @@
 #include <limits.h>
 #include <stdio.h>
 
-int     builtin_pwd(void)
+int	builtin_pwd(void)
 {
-    char    cwd[PATH_MAX];
+	char	cwd[PATH_MAX];
 
-    if (getcwd(cwd, sizeof(cwd)))
-    {
-        printf("%s\n", cwd);
-        return (0);
-    }
-    perror("pwd");
-    return (1);
+	if (getcwd(cwd, sizeof(cwd)))
+	{
+		printf("%s\n", cwd);
+		return (0);
+	}
+	perror("pwd");
+	return (1);
 }

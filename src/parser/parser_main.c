@@ -6,7 +6,7 @@
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:55:10 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/06 14:45:07 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/06 15:07:34 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,18 +135,14 @@ static t_cmd	*parse_token_loop(t_token *tokens, t_cmd **cmds,
 ** Parse tokens into a linked list of command structures
 ** Supports words, pipes and redirections
 */
-t_cmd	*parse_tokens_to_cmds(t_token *tokens)
+t_cmd   *parse_tokens_to_cmds(t_token *tokens)
 {
-	t_cmd	*cmds;
-	t_cmd	*current;
-	int		segment_index;
-	int		total_segments;
-	int		needs_pipe;
+    t_cmd   *cmds;
+    t_cmd   *current;
+    int             needs_pipe;
 
-	cmds = NULL;
-	current = NULL;
-	segment_index = 0;
-	total_segments = count_command_segments(tokens);
-	needs_pipe = command_needs_pipe(tokens);
-	return (parse_token_loop(tokens, &cmds, &current, needs_pipe));
+    cmds = NULL;
+    current = NULL;
+    needs_pipe = command_needs_pipe(tokens);
+    return (parse_token_loop(tokens, &cmds, &current, needs_pipe));
 }

@@ -6,7 +6,7 @@
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:56:48 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/05 16:56:49 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/06 15:20:32 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,18 +20,18 @@
 ** function stops processing and returns -1 so the caller can
 ** handle the error appropriately.  On success it returns 0.
 */
-int handle_redirections(t_cmd *cmd)
+int	handle_redirections(t_cmd *cmd)
 {
-    t_redir *current;
+	t_redir	*current;
 
-    if (!cmd || !cmd->redir)
-        return (0);
-    current = cmd->redir;
-    while (current)
-    {
-        if (redir_apply(current) < 0)
-            return (-1);
-        current = current->next;
-    }
-    return (0);
+	if (!cmd || !cmd->redir)
+		return (0);
+	current = cmd->redir;
+	while (current)
+	{
+		if (redir_apply(current) < 0)
+			return (-1);
+		current = current->next;
+	}
+	return (0);
 }
