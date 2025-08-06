@@ -6,12 +6,13 @@
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:54:56 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/06 15:48:13 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/06 17:22:38 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "expansion.h"
+#include "quotes.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -22,10 +23,17 @@ static void	process_line(char *line, t_shell *shell)
 	char	*expanded;
 
 	expanded = expand_variables(line, shell->env, shell->last_exit_code);
-	free_user_input(line);
-	if (!expanded)
-		return ;
-	tokens = tokenize_input(expanded);
+        free_user_input(line);
+        if (!expanded)
+                return ;
+        if (contains_unclosed_quotes(expanded))
+        {
+                print_error("Error: unclosed quotes");
+                shell->last_exit_code = 2;
+                free_user_input(expanded);
+                return ;
+        }
+        tokens = tokenize_input(expanded);
 	cmds = parse_tokens_to_cmds(tokens);
 	if (cmds)
 		execute_pipeline(cmds, shell);

@@ -6,7 +6,7 @@
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 12:25:12 by pedroribeir       #+#    #+#             */
-/*   Updated: 2025/08/05 16:57:39 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/06 17:25:09 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,17 +23,23 @@ static void	skip_whitespace(const char *line, int *i)
 static void	handle_word_token(const char *line, int *i, t_token **head)
 {
 	const char	*start;
-	int			length;
 	char		*value;
+	char		quote;
 
 	start = &line[*i];
-	length = 0;
-	while (line[*i] && !is_space(line[*i]) && !is_metachar(line[*i]))
+	quote = 0;
+	while (line[*i] && (quote || (!is_space(line[*i]) && !is_metachar(line[*i]))))
 	{
+		if (is_quote(line[*i]))
+		{
+			if (!quote)
+				quote = line[*i];
+			else if (quote == line[*i])
+				quote = 0;
+		}
 		(*i)++;
-		length++;
 	}
-	value = ft_strndup(start, length);
+	value = ft_strndup(start, *i - (start - line));
 	add_token(head, new_token(value, TOKEN_WORD));
 }
 
@@ -42,9 +48,18 @@ static void	handle_metachar_token(const char *line, int *i, t_token **head)
 	char		*value;
 	int			type;
 
-	value = ft_strndup(&line[*i], 1);
 	type = token_type(&line[*i]);
-	(*i)++;
+	if (type == TOKEN_HEREDOC || type == TOKEN_REDIR_APPEND
+		|| type == TOKEN_AND_IF || type == TOKEN_OR_IF)
+	{
+		value = ft_strndup(&line[*i], 2);
+		*i += 2;
+	}
+	else
+	{
+		value = ft_strndup(&line[*i], 1);
+		(*i)++;
+	}
 	add_token(head, new_token(value, type));
 }
 

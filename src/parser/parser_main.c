@@ -6,12 +6,13 @@
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:55:10 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/06 15:07:34 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/06 17:24:02 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 #include "redir.h"
+#include "quotes.h"
 #include "libft.h"
 #include <stdlib.h>
 
@@ -57,9 +58,15 @@ static void	add_redirection(t_redir **list, t_redir *new_redir)
 
 static int	process_word_token(t_cmd *current, t_token *token)
 {
-	if (current)
-		ft_add_arg(&current->argv, token->value);
-	return (0);
+	    char    *clean;
+
+    if (current)
+    {
+        clean = remove_quotes(token->value);
+        ft_add_arg(&current->argv, clean);
+        free(clean);
+    }
+    return (0);
 }
 
 static int	process_redirection_token(t_cmd *current, t_token **tokens)
