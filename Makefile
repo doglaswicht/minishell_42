@@ -65,6 +65,7 @@ SRCS	= \
 	src/exec/exec_path.c \
 	src/exec/pipes.c \
 	src/exec/wait.c \
+	src/exec/exec_single.c \
 	src/builtin/dispatcher.c \
 	src/builtin/echo.c \
 	src/builtin/cd.c \
