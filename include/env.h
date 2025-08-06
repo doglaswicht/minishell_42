@@ -6,7 +6,7 @@
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 20:01:03 by procha-r          #+#    #+#             */
-/*   Updated: 2025/08/05 16:48:15 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/06 12:16:31 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <unistd.h>
 # include "libft.h"
+
 typedef struct s_env
 {
 	char			*key;

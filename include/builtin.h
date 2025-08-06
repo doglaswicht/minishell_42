@@ -6,7 +6,7 @@
 /*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 20:11:49 by procha-r          #+#    #+#             */
-/*   Updated: 2025/08/06 01:21:00 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/06 12:15:32 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 
 typedef struct s_shell	t_shell;
 typedef struct s_cmd	t_cmd;
-typedef int (*t_builtin_fn)(t_cmd *cmd, t_shell *shell);
+typedef int		(*t_builtin_fn)(t_cmd *cmd, t_shell *shell);
 
 int						is_builtin(t_cmd *cmd);
 int						execute_builtin(t_cmd *cmd, t_shell *shell);
