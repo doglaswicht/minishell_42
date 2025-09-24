@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:52:31 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/06 15:50:02 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/26 22:55:59 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,34 +14,6 @@
 #include "libft.h"
 #include <unistd.h>
 #include <stdio.h>
-
-static char	*get_target_path(t_cmd *cmd, t_shell *shell)
-{
-	if (cmd->argv[1])
-		return (cmd->argv[1]);
-	return (get_env_value(shell->env, "HOME"));
-}
-
-static int	handle_cd_error(char *oldpwd)
-{
-	perror("cd");
-	free(oldpwd);
-	return (1);
-}
-
-static void	update_env_dirs(t_shell *shell, char *oldpwd, char *cwd)
-{
-	if (oldpwd)
-	{
-		set_env_value(&shell->env, "OLDPWD", oldpwd);
-		free(oldpwd);
-	}
-	if (cwd)
-	{
-		set_env_value(&shell->env, "PWD", cwd);
-		free(cwd);
-	}
-}
 
 int	builtin_cd(t_cmd *cmd, t_shell *shell)
 {

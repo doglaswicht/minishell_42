@@ -1,29 +1,44 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   cd_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/05 16:53:00 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/26 22:52:28 by procha-r         ###   ########.fr       */
+/*   Created: 2025/08/26 22:54:50 by procha-r          #+#    #+#             */
+/*   Updated: 2025/08/26 22:57:10 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "builtin.h"
+#include "libft.h"
 #include <unistd.h>
-#include <limits.h>
 #include <stdio.h>
 
-int	builtin_pwd(void)
+char	*get_target_path(t_cmd *cmd, t_shell *shell)
 {
-	char	cwd[PATH_MAX];
+	if (cmd->argv[1])
+		return (cmd->argv[1]);
+	return (get_env_value(shell->env, "HOME"));
+}
 
-	if (getcwd(cwd, sizeof(cwd)))
-	{
-		printf("%s\n", cwd);
-		return (0);
-	}
-	perror("pwd");
+int	handle_cd_error(char *oldpwd)
+{
+	perror("cd");
+	free(oldpwd);
 	return (1);
+}
+
+void	update_env_dirs(t_shell *shell, char *oldpwd, char *cwd)
+{
+	if (oldpwd)
+	{
+		set_env_value(&shell->env, "OLDPWD", oldpwd);
+		free(oldpwd);
+	}
+	if (cwd)
+	{
+		set_env_value(&shell->env, "PWD", cwd);
+		free(cwd);
+	}
 }

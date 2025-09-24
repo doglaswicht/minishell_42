@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:56:39 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/06 15:16:34 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/27 13:20:03 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@
 ** read end of the pipe is returned so it can be used as the
 ** command's STDIN.  On any error the function returns -1.
 */
-int	heredoc(const char *delimiter)
+
+int	heredoc(const char *delimiter, t_shell *shell)
 {
 	int		fd[2];
 	char	*line;
@@ -36,8 +37,8 @@ int	heredoc(const char *delimiter)
 		return (-1);
 	while (1)
 	{
-		set_prompt_state(PROMPT_HEREDOC);
-		display_prompt();
+		set_prompt_state(shell, PROMPT_HEREDOC);
+		display_prompt(shell);
 		line = readline(NULL);
 		if (!line || !ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1))
 		{
@@ -49,6 +50,6 @@ int	heredoc(const char *delimiter)
 		free(line);
 	}
 	close(fd[1]);
-	set_prompt_state(PROMPT_DEFAULT);
+	set_prompt_state(shell, PROMPT_DEFAULT);
 	return (fd[0]);
 }

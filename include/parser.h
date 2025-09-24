@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 20:03:09 by procha-r          #+#    #+#             */
-/*   Updated: 2025/08/05 16:49:07 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/27 09:21:13 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,16 @@ int		command_needs_pipe(t_token *tokens);
 int		command_is_empty(t_cmd *cmd);
 int		is_redirection_token(t_token *token);
 void	ft_add_arg(char ***argv, const char *value);
+
+size_t	count_argv_len(char **argv);
+char	**allocate_new_argv(size_t len);
+void	copy_argv(char **new_argv, char **argv);
+void	free_old_argv(char **argv);
+
+t_redir	*new_redirection(t_token_type type, const char *target);
+void	add_redirection(t_redir **list, t_redir *new_redir);
+int		process_word_token(t_cmd *current, t_token *token);
+int		process_redirection_token(t_cmd *current, t_token **tokens);
+t_cmd	*create_new_command(t_cmd **cmds, int needs_pipe, int segment_index);
 
 #endif

@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "signals.h"
+#include "input.h"
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -18,6 +20,9 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
+	memset(&shell, 0, sizeof(t_shell));
+	init_readline();
+	init_signals();
 	shell.env = init_env_from_environ(envp);
 	shell.last_exit_code = 0;
 	shell_loop(&shell);

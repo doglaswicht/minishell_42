@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedroribeiro <pedroribeiro@student.42.f    +#+  +:+       +#+        */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 21:13:36 by pedroribeir       #+#    #+#             */
-/*   Updated: 2024/11/10 21:18:46 by pedroribeir      ###   ########.fr       */
+/*   Updated: 2025/08/27 18:30:12 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
 static void	copy_forward(unsigned char *dst, \
-		const unsigned char *src, size_t len)
+const unsigned char *src, size_t len)
 {
 	size_t	i;
 
@@ -26,7 +26,7 @@ static void	copy_forward(unsigned char *dst, \
 }
 
 static void	copy_backward(unsigned char *dst, \
-		const unsigned char *src, size_t len)
+const unsigned char *src, size_t len)
 {
 	while (len > 0)
 	{

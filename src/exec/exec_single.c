@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_single.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 14:30:00 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/06 14:30:00 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/27 15:23:14 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 #include "builtin.h"
 #include "redir.h"
 #include <unistd.h>
-
-extern int		g_exit_code;
 
 static void	restore_stdio(int saved[2])
 {
@@ -37,7 +35,7 @@ static int	handle_builtin_execution(t_cmd *cmd, t_shell *shell)
 
 	saved[0] = dup(STDIN_FILENO);
 	saved[1] = dup(STDOUT_FILENO);
-	if (saved[0] < 0 || saved[1] < 0 || handle_redirections(cmd) < 0)
+	if (saved[0] < 0 || saved[1] < 0 || handle_redirections(cmd, shell) < 0)
 	{
 		restore_stdio(saved);
 		return (shell->last_exit_code = 1);
@@ -63,7 +61,12 @@ int	execute_single_command(t_cmd *cmd, t_shell *shell)
 	if (pid < 0)
 		return (shell->last_exit_code = 1);
 	waitpid(pid, &status, 0);
-	update_exit_code_from_status(status);
-	shell->last_exit_code = g_exit_code;
+	if (WIFEXITED(status))
+		shell->last_exit_code = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+		shell->last_exit_code = 128 + WTERMSIG(status);
+	else
+		shell->last_exit_code = 1;
+	shell->last_exit_code = shell->last_exit_code;
 	return (shell->last_exit_code);
 }

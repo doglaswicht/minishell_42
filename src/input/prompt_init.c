@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isalnum.c                                       :+:      :+:    :+:   */
+/*   prompt_init.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/10 20:28:15 by pedroribeir       #+#    #+#             */
-/*   Updated: 2025/08/27 15:25:01 by procha-r         ###   ########.fr       */
+/*   Created: 2025/08/27 14:21:36 by procha-r          #+#    #+#             */
+/*   Updated: 2025/08/27 14:22:06 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "input.h"
+#include <unistd.h>
 
-int	ft_isalnum(int c)
+void	init_prompt(t_shell *shell)
 {
-	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') \
-|| (c >= '0' && c <= '9'))
-		return (1);
-	return (0);
+	shell->prompt.mode = PROMPT_DEFAULT;
+	shell->prompt.last_status = 0;
+	shell->prompt.interactive = isatty(STDIN_FILENO);
 }

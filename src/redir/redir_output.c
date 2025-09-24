@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir_output.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 15:22:03 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/06 15:22:04 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/27 18:31:11 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,11 @@ int	open_output_file(const char *filename, int append)
 ** temporary file descriptor is closed before returning.  Returns
 ** 0 on success or -1 on failure.
 */
-int	setup_redir_output(t_redir *redir)
+int	setup_redir_output(t_redir *redir, t_shell *shell)
 {
 	int	fd;
 
+	(void)shell;
 	if (!redir || !redir->target)
 		return (handle_redir_error("redirection"));
 	if (redir->type == TOKEN_REDIR_OUT)

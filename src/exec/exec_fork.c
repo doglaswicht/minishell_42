@@ -3,26 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   exec_fork.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:53:43 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/06 13:06:48 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/27 14:31:12 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "exec.h"
 #include "builtin.h"
 #include "redir.h"
+#include "signals.h"
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
-
-extern int	**g_pipes;
-extern int	g_pipe_count;
-extern int	g_exit_code;
-
-pid_t		g_last_pid = -1;
 
 static void	free_envp(char **envp)
 {
@@ -41,7 +36,7 @@ void	child_process_exec(t_cmd *cmd, t_shell *shell, int is_last)
 	int	status;
 
 	(void)is_last;
-	if (handle_redirections(cmd) < 0)
+	if (handle_redirections(cmd, shell) < 0)
 		exit(1);
 	if (is_builtin(cmd))
 	{
@@ -53,7 +48,7 @@ void	child_process_exec(t_cmd *cmd, t_shell *shell, int is_last)
 
 int	spawn_child_process(t_cmd *cmd, t_shell *shell, int *fds, int is_last)
 {
-	pid_t		pid;
+	pid_t	pid;
 
 	pid = fork();
 	if (pid < 0)
@@ -63,22 +58,23 @@ int	spawn_child_process(t_cmd *cmd, t_shell *shell, int *fds, int is_last)
 	}
 	if (pid == 0)
 	{
+		reset_signals();
 		if (fds[0] != STDIN_FILENO)
 			dup2(fds[0], STDIN_FILENO);
 		if (fds[1] != STDOUT_FILENO)
 			dup2(fds[1], STDOUT_FILENO);
-		close_all_pipes(g_pipes, g_pipe_count);
+		close_all_pipes(shell->pipes, shell->pipe_count);
 		child_process_exec(cmd, shell, is_last);
 	}
 	if (is_last)
-		g_last_pid = pid;
+		shell->last_pid = pid;
 	return (pid);
 }
 
 int	launch_execve(t_cmd *cmd, t_shell *shell)
 {
-	char		*path;
-	char		**envp;
+	char	*path;
+	char	**envp;
 	int		ret;
 
 	path = resolve_command_path(cmd->argv[0], shell->env);

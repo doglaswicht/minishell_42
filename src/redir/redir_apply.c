@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir_apply.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:56:42 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/06 15:17:28 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/27 13:50:20 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,13 @@
 ** or -1 if the setup function reports an error or the type is
 ** unknown.
 */
-int	redir_apply(t_redir *redir)
+int	redir_apply(t_redir *redir, t_shell *shell)
 {
 	if (!redir)
 		return (0);
 	if (redir->type == TOKEN_REDIR_IN || redir->type == TOKEN_HEREDOC)
-		return (setup_redir_input(redir));
+		return (setup_redir_input(redir, shell));
 	if (redir->type == TOKEN_REDIR_OUT || redir->type == TOKEN_REDIR_APPEND)
-		return (setup_redir_output(redir));
+		return (setup_redir_output(redir, shell));
 	return (-1);
 }

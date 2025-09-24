@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:53:51 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/05 16:53:52 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/27 15:23:50 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,13 +70,16 @@ void	close_all_pipes(int **pipes, int count)
 {
 	int	i;
 
-	if (!pipes)
+	if (!pipes || count <= 0)
 		return ;
 	i = 0;
 	while (i < count)
 	{
-		close(pipes[i][0]);
-		close(pipes[i][1]);
+		if (pipes[i])
+		{
+			close(pipes[i][0]);
+			close(pipes[i][1]);
+		}
 		i++;
 	}
 }
@@ -85,12 +88,13 @@ void	free_pipe_fds(int **pipes, int count)
 {
 	int	i;
 
-	if (!pipes)
+	if (!pipes || count <= 0)
 		return ;
 	i = 0;
 	while (i < count)
 	{
-		free(pipes[i]);
+		if (pipes[i])
+			free(pipes[i]);
 		i++;
 	}
 	free(pipes);

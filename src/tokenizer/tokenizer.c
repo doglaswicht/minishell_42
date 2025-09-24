@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 12:25:12 by pedroribeir       #+#    #+#             */
-/*   Updated: 2025/08/06 17:25:09 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/26 23:11:48 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ static void	handle_word_token(const char *line, int *i, t_token **head)
 
 	start = &line[*i];
 	quote = 0;
-	while (line[*i] && (quote || (!is_space(line[*i]) && !is_metachar(line[*i]))))
+	while (line[*i] && (quote || (!is_space(line[*i]) \
+&& !is_metachar(line[*i]))))
 	{
 		if (is_quote(line[*i]))
 		{

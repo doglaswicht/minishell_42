@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 20:13:32 by procha-r          #+#    #+#             */
-/*   Updated: 2025/08/05 16:48:28 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/27 18:26:13 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,25 @@
 # include "env.h"
 # include "utils.h"
 
+typedef struct s_expand_ctx
+{
+	t_env	*env;
+	int		last_status;
+	int		quote;
+	int		i;
+}	t_expand_ctx;
+
 char	*expand_variables(const char *line, t_env *env, int last_status);
+char	*expand_loop(const char *line, t_expand_ctx *ctx);
+
+char	*append_char(char *str, char c);
+char	*handle_exit_status(const char *line, int *i, int last_status);
+char	*handle_variable_expansion(const char *line, int *i, t_env *env);
+char	*process_dollar_sign(const char *line, int *i, t_env *env,
+			int last_status);
+char	*handle_quote_case(char *result, const char *line, int *i, int *q);
+char	*handle_dollar_case(char *result, const char *line, t_expand_ctx *ctx);
+
 char	*expand_var_token(const char *token, t_env *env);
 char	*expand_exit_status(const char *line, int status);
 int		is_expandable(char c);

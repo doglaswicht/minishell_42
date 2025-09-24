@@ -1,0 +1,178 @@
+
+=============================
+TESTE: Comando simples - ls
+=============================
+Makefile
+all_code.txt
+code_collector.sh
+file.txt
+include
+input.tmp
+minishell
+minishell_test_log.txt
+minishell_test_runner.sh
+obsidian
+out.txt
+out1.txt
+src
+exit
+
+=============================
+TESTE: Comando simples - echo Hello World
+=============================
+Hello World
+exit
+
+=============================
+TESTE: Comando com path absoluto
+=============================
+Testando
+exit
+
+=============================
+TESTE: Built-in: cd ..
+=============================
+cd: No such file or directory
+exit
+
+=============================
+TESTE: Built-in: export, echo e unset
+=============================
+export: `\nunset`: not a valid identifier
+export: `TESTE\necho`: not a valid identifier
+exit
+
+=============================
+TESTE: Built-in: env
+=============================
+SHELL=/usr/bin/zsh
+WSL2_GUI_APPS_ENABLED=1
+WSL_DISTRO_NAME=Ubuntu
+NAME=dwDesk
+PWD=/home/dw/42/minishell-main
+LOGNAME=dw
+HOME=/home/dw
+LANG=C.UTF-8
+WSL_INTEROP=/run/WSL/4253_interop
+WAYLAND_DISPLAY=wayland-0
+TERM=xterm-256color
+USER=dw
+DISPLAY=:0
+SHLVL=1
+XDG_RUNTIME_DIR=/run/user/1000/
+DEBUGINFOD_URLS=https://debuginfod.ubuntu.com 
+WSLENV=
+XDG_DATA_DIRS=/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop
+PATH=/home/dw/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Users/dw/AppData/Local/Temp/.tmpLFGBnM:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/NVIDIA Corporation/NVIDIA app/NvDLISR:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Program Files/Git/cmd:/mnt/c/Users/dw/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/dw/AppData/Local/Programs/Microsoft VS Code/bin:/mnt/c/Users/dw/.vscode/extensions/openai.chatgpt-0.4.12-win32-x64/bin/windows-x86_64:/snap/bin
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+HOSTTYPE=x86_64
+PULSE_SERVER=unix:/mnt/wslg/PulseServer
+_=./minishell
+exit
+
+=============================
+TESTE: Built-in: exit
+=============================
+exit
+
+=============================
+TESTE: Variável $USER42
+=============================
+exit
+
+=============================
+TESTE: Aspas simples bloqueando $
+=============================
+$USER42
+exit
+
+=============================
+TESTE: Aspas duplas com $
+=============================
+Meu nome é 
+exit
+
+=============================
+TESTE: Aspas simples
+=============================
+texto simples
+exit
+
+=============================
+TESTE: Aspas duplas com espaços e $
+=============================
+texto com  e espaço
+exit
+
+=============================
+TESTE: Nested quotes
+=============================
+Um 'dentro' do outro
+exit
+
+=============================
+TESTE: Saída >
+=============================
+Hello testfile.txt
+exit
+
+=============================
+TESTE: Saída >>
+=============================
+Again testfile.txt
+exit
+
+=============================
+TESTE: Entrada <
+=============================
+testfile.txt: No such file or directory
+exit
+
+=============================
+TESTE: Heredoc << EOF
+=============================
+exit
+cat: '1\nlinha': No such file or directory
+cat: '2\nEOF': No such file or directory
+
+=============================
+TESTE: Pipe simples
+=============================
+14
+exit
+
+=============================
+TESTE: Pipe com grep
+=============================
+-e a\nb\nc
+exit
+
+=============================
+TESTE: Código de saída após sucesso
+=============================
+ls\necho: command not found
+exit
+
+=============================
+TESTE: Código de saída após erro
+=============================
+ls: cannot access 'arquivo_inexistente\necho': No such file or directory
+ls: cannot access '0': No such file or directory
+exit
+
+=============================
+TESTE: Comando inexistente
+=============================
+comando_invalido: command not found
+exit
+
+=============================
+TESTE: Redirecionamento inválido
+=============================
+exit
+
+=============================
+TESTE: Arquivo inexistente para leitura
+=============================
+nao_existe.txt: No such file or directory
+exit

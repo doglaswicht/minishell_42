@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 20:01:03 by procha-r          #+#    #+#             */
-/*   Updated: 2025/08/05 16:48:38 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/27 14:06:53 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,32 @@
 # include "env.h"
 # include "cleanup.h"
 # include "utils.h"
-# include "input.h"
 
 typedef struct s_env	t_env;
 typedef struct s_cmd	t_cmd;
 
+typedef enum e_prompt_state
+{
+	PROMPT_DEFAULT,
+	PROMPT_HEREDOC
+}	t_prompt_state;
+
+typedef struct s_prompt_info
+{
+	t_prompt_state	mode;
+	int				last_status;
+	int				interactive;
+}	t_prompt_info;
+
 typedef struct s_shell
 {
-	t_env	*env;
-	int		last_exit_code;
-	int		is_running;
+	t_env			*env;
+	int				last_exit_code;
+	int				is_running;
+	pid_t			last_pid;
+	int				**pipes;
+	int				pipe_count;
+	t_prompt_info	prompt;
 }	t_shell;
 
 int		main(int argc, char **argv, char **envp);

@@ -1,21 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isalnum.c                                       :+:      :+:    :+:   */
+/*   env_to_str_array.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/10 20:28:15 by pedroribeir       #+#    #+#             */
-/*   Updated: 2025/08/27 15:25:01 by procha-r         ###   ########.fr       */
+/*   Created: 2025/08/27 15:40:53 by procha-r          #+#    #+#             */
+/*   Updated: 2025/08/27 15:41:25 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "env.h"
 
-int	ft_isalnum(int c)
+char	**env_to_str_array(t_env *env)
 {
-	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') \
-|| (c >= '0' && c <= '9'))
-		return (1);
-	return (0);
+	char	**arr;
+	size_t	count;
+
+	count = count_env_nodes(env);
+	arr = malloc(sizeof(char *) * (count + 1));
+	if (!arr)
+		return (NULL);
+	if (!fill_env_array(arr, env))
+		return (NULL);
+	return (arr);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 20:01:03 by procha-r          #+#    #+#             */
-/*   Updated: 2025/08/06 12:16:31 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/27 15:43:32 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,10 @@ void	add_env_node(char *key, char *value, t_env **env_list);
 t_env	*new_env_node(char *key, char *value);
 void	free_env_list(t_env *env);
 void	print_env_list(t_env *env);
+
+char	*create_env_string(t_env *tmp);
+size_t	count_env_nodes(t_env *env);
+int		fill_env_array(char **arr, t_env *env);
 char	**env_to_str_array(t_env *env);
 
 #endif

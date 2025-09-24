@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_env.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 16:53:59 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/05 16:54:00 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/27 09:21:40 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ char	*expand_var_token(const char *token, t_env *env)
 {
 	char	*key;
 	char	*value;
-	int	len;
+	int		len;
 
 	if (!token)
 		return (NULL);

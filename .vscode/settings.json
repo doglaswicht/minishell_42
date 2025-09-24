@@ -1,5 +1,9 @@
 {
 	"files.associations": {
-		"exec.h": "c"
+		"exec.h": "c",
+		"history.h": "c",
+		"input.h": "c",
+		"quotes.h": "c",
+		"readline.h": "c"
 	}
 }

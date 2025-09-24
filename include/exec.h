@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/26 20:12:24 by procha-r          #+#    #+#             */
-/*   Updated: 2025/08/05 16:48:20 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/27 18:29:55 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,12 @@ void	handle_exec_error(const char *msg);
 int		setup_pipes(t_cmd *cmds, int ***pipes);
 void	close_all_pipes(int **pipes, int count);
 void	free_pipe_fds(int **pipes, int count);
-int		wait_for_all(t_cmd *cmds);
-void	update_exit_code_from_status(int status);
+int		wait_for_all(t_cmd *cmds, t_shell *shell);
+int		update_exit_code_from_status(int status);
+
+int		execute_pipeline_commands(t_cmd *cmds, t_shell *shell);
+void	setup_fds(int fds[2], int i, t_shell *shell);
+int		execute_single_command_in_pipeline(t_cmd *cmd, t_shell *shell, \
+int fds[2], int is_last);
 
 #endif

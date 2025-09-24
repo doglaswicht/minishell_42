@@ -1,21 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isalnum.c                                       :+:      :+:    :+:   */
+/*   wait_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/10 20:28:15 by pedroribeir       #+#    #+#             */
-/*   Updated: 2025/08/27 15:25:01 by procha-r         ###   ########.fr       */
+/*   Created: 2025/08/27 14:33:21 by procha-r          #+#    #+#             */
+/*   Updated: 2025/08/27 15:23:00 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <sys/wait.h>
 
-int	ft_isalnum(int c)
+int	update_exit_code_from_status(int status)
 {
-	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') \
-|| (c >= '0' && c <= '9'))
-		return (1);
-	return (0);
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	return (1);
 }

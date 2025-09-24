@@ -1,25 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand_main.c                                      :+:      :+:    :+:   */
+/*   expand_loop.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/05 16:54:05 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/27 18:25:57 by procha-r         ###   ########.fr       */
+/*   Created: 2025/08/27 18:22:23 by procha-r          #+#    #+#             */
+/*   Updated: 2025/08/27 18:24:40 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "expansion.h"
 #include "libft.h"
 
-char	*expand_variables(const char *line, t_env *env, int last_status)
+char	*expand_loop(const char *line, t_expand_ctx *ctx)
 {
-	t_expand_ctx	ctx;
+	char	*result;
 
-	if (!line)
-		return (NULL);
-	ctx.env = env;
-	ctx.last_status = last_status;
-	return (expand_loop(line, &ctx));
+	result = safe_strdup("");
+	ctx->i = 0;
+	ctx->quote = 0;
+	while (line[ctx->i])
+	{
+		if (line[ctx->i] == '\'' || line[ctx->i] == '"')
+			result = handle_quote_case(result, line, &ctx->i, &ctx->quote);
+		else if (line[ctx->i] == '$' && ctx->quote != '\'')
+			result = handle_dollar_case(result, line, ctx);
+		else
+			result = append_char(result, line[ctx->i++]);
+	}
+	return (result);
 }

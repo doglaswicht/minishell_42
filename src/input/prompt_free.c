@@ -1,21 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isalnum.c                                       :+:      :+:    :+:   */
+/*   prompt_free.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/10 20:28:15 by pedroribeir       #+#    #+#             */
-/*   Updated: 2025/08/27 15:25:01 by procha-r         ###   ########.fr       */
+/*   Created: 2025/08/27 14:23:46 by procha-r          #+#    #+#             */
+/*   Updated: 2025/08/27 14:24:15 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <stdlib.h>
 
-int	ft_isalnum(int c)
+void	free_user_input(char *line)
 {
-	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') \
-|| (c >= '0' && c <= '9'))
-		return (1);
-	return (0);
+	if (line)
+		free(line);
 }

@@ -33,6 +33,9 @@ SRCS	= \
 	src/main/shell_loop.c \
 	src/input/read_input.c \
 	src/input/readline_config.c \
+	src/input/prompt_init.c \
+	src/input/prompt_utils.c \
+	src/input/prompt_free.c \
 	src/input/prompt_state.c \
 	src/signals/signal_init.c \
 	src/signals/signal_handlers.c \
@@ -49,7 +52,12 @@ SRCS	= \
 	src/expansion/expand_utils.c \
 	src/expansion/expand_env.c \
 	src/expansion/expand_exit.c \
+	src/expansion/expand_char_helpers.c \
+	src/expansion/expand_dollar_helpers.c \
+	src/expansion/expand_loop.c \
+	src/parser/ft_add_arg.c \
 	src/parser/parser_main.c \
+	src/parser/parser_main_utils.c \
 	src/parser/parser_cmd.c \
 	src/parser/parser_utils.c \
 	src/parser/parser_split.c \
@@ -60,11 +68,13 @@ SRCS	= \
 	src/redir/redir_apply.c \
 	src/redir/redir_error.c \
 	src/exec/exec_pipeline.c \
+	src/exec/exec_pipeline_helpers.c \
 	src/exec/exec_fork.c \
 	src/exec/exec_utils.c \
 	src/exec/exec_path.c \
 	src/exec/pipes.c \
 	src/exec/wait.c \
+	src/exec/wait_utils.c \
 	src/exec/exec_single.c \
 	src/builtin/dispatcher.c \
 	src/builtin/echo.c \
@@ -81,14 +91,17 @@ SRCS	= \
 	src/env/env_set.c \
 	src/env/env_unset.c \
 	src/env/env_utils.c \
+	src/env/env_to_str_array.c \
 	src/env/env_free.c \
 	src/utils/malloc_helpers.c \
 	src/utils/str_utils.c \
+	src/utils/cd_utils.c \
 	src/utils/str_join.c \
 	src/utils/free_utils.c \
 	src/utils/error.c \
 	src/cleanup/cleanup.c \
 	src/cleanup/exit.c
+
 
 OBJS	= $(SRCS:.c=.o)
 

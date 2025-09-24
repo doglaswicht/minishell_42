@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_helpers.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
+/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 14:45:00 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/06 14:05:54 by dleite-b         ###   ########.fr       */
+/*   Updated: 2025/08/27 15:44:47 by procha-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	env_key_exists(t_env *env, const char *key)
 	return (0);
 }
 
-static char	*create_env_string(t_env *tmp)
+char	*create_env_string(t_env *tmp)
 {
 	char	*key_eq;
 	char	*result;
@@ -55,35 +55,34 @@ static char	*create_env_string(t_env *tmp)
 	return (result);
 }
 
-char	**env_to_str_array(t_env *env)
+size_t	count_env_nodes(t_env *env)
 {
 	size_t	count;
-	size_t	i;
-	char	**arr;
-	t_env	*tmp;
 
 	count = 0;
-	tmp = env;
-	while (tmp && ++count)
-		tmp = tmp->next;
-	arr = malloc(sizeof(char *) * (count + 1));
-	if (!arr)
-		return (NULL);
+	while (env && ++count)
+		env = env->next;
+	return (count);
+}
+
+int	fill_env_array(char **arr, t_env *env)
+{
+	size_t	i;
+
 	i = 0;
-	tmp = env;
-	while (tmp)
+	while (env)
 	{
-		arr[i] = create_env_string(tmp);
+		arr[i] = create_env_string(env);
 		if (!arr[i])
 		{
 			while (i > 0)
 				free(arr[--i]);
 			free(arr);
-			return (NULL);
+			return (0);
 		}
 		i++;
-		tmp = tmp->next;
+		env = env->next;
 	}
 	arr[i] = NULL;
-	return (arr);
+	return (1);
 }
