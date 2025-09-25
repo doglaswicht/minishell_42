@@ -18,7 +18,7 @@ void	init_signals(void)
 	disable_echoctl();
 	g_signal = 0;
 	signal(SIGINT, signal_handler_parent);
-	signal(SIGQUIT, signal_handler_parent);
+	signal(SIGQUIT, SIG_IGN);
 }
 
 void	reset_signals(void)
