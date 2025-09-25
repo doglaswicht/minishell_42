@@ -135,4 +135,13 @@ re: fclean all
 
 bonus: all
 
+tester: re $(NAME)
+	@echo "  $(B)$(GOLD)Setting up minishell tester...$(D)"
+	@if [ ! -d "minishell_tester" ]; then \
+		echo "  $(B)$(GOLD)Cloning minishell_tester repository...$(D)"; \
+		git clone git@github.com:MrSloth-dev/minishell_tester.git; \
+	fi
+	@echo "  $(B)$(GOLD)Running tests...$(D)"
+	@cd minishell_tester && ./tester
+	@echo "  $(B)$(GRN)Tests completed!$(D)"
 .PHONY: all clean fclean re bonus
