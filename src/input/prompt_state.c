@@ -12,18 +12,38 @@
 
 #include "input.h"
 #include "libft.h"
-#include <unistd.h>
+#include "utils.h"
+#include <stdlib.h>
 
-void	display_prompt(t_shell *shell)
+static char	*build_status_prompt(t_shell *shell)
+{
+	char	*prompt;
+	char	*status;
+
+	status = ft_itoa(shell->prompt.last_status);
+	if (!status)
+		return (safe_strdup("minishell$ "));
+	prompt = safe_strdup("[");
+	if (!prompt)
+	{
+		free(status);
+		return (safe_strdup("minishell$ "));
+	}
+	prompt = ft_strjoin_free(prompt, status);
+	free(status);
+	if (!prompt)
+		return (safe_strdup("minishell$ "));
+	prompt = ft_strjoin_free(prompt, "] minishell$ ");
+	if (!prompt)
+		return (safe_strdup("minishell$ "));
+	return (prompt);
+}
+
+char	*build_prompt(t_shell *shell)
 {
 	if (!shell->prompt.interactive)
-		return ;
+		return (NULL);
 	if (shell->prompt.mode == PROMPT_HEREDOC)
-		write(STDOUT_FILENO, "> ", 2);
-	else
-	{
-		ft_putstr_fd("[", STDOUT_FILENO);
-		ft_putnbr_fd(shell->prompt.last_status, STDOUT_FILENO);
-		ft_putstr_fd("] minishell$ ", STDOUT_FILENO);
-	}
+		return (safe_strdup("heredoc> "));
+	return (build_status_prompt(shell));
 }

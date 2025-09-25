@@ -81,7 +81,7 @@ int	launch_execve(t_cmd *cmd, t_shell *shell)
 	envp = env_to_str_array(shell->env);
 	if (!path)
 	{
-		fprintf(stderr, "%s: command not found\n", cmd->argv[0]);
+		fprintf(stderr, "minishell: %s: command not found\n", cmd->argv[0]);
 		free_envp(envp);
 		return (127);
 	}

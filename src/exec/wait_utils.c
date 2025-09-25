@@ -11,12 +11,21 @@
 /* ************************************************************************** */
 
 #include <sys/wait.h>
+#include <unistd.h>
+#include <signal.h>
 
 int	update_exit_code_from_status(int status)
 {
+	int	sig;
+
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	if (WIFSIGNALED(status))
-		return (128 + WTERMSIG(status));
+	{
+		sig = WTERMSIG(status);
+		if (sig == SIGQUIT)
+			write(STDERR_FILENO, "Quit: 3\n", 8);
+		return (128 + sig);
+	}
 	return (1);
 }

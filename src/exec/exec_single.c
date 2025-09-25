@@ -14,6 +14,7 @@
 #include "builtin.h"
 #include "redir.h"
 #include <unistd.h>
+#include <signal.h>
 
 static void	restore_stdio(int saved[2])
 {
@@ -64,7 +65,11 @@ int	execute_single_command(t_cmd *cmd, t_shell *shell)
 	if (WIFEXITED(status))
 		shell->last_exit_code = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
+	{
+		if (WTERMSIG(status) == SIGQUIT)
+			write(STDERR_FILENO, "Quit: 3\n", 8);
 		shell->last_exit_code = 128 + WTERMSIG(status);
+	}
 	else
 		shell->last_exit_code = 1;
 	shell->last_exit_code = shell->last_exit_code;

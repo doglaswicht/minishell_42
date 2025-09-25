@@ -32,14 +32,16 @@ int	heredoc(const char *delimiter, t_shell *shell)
 {
 	int		fd[2];
 	char	*line;
+	char	*prompt;
 
 	if (pipe(fd) < 0)
 		return (-1);
 	while (1)
 	{
 		set_prompt_state(shell, PROMPT_HEREDOC);
-		display_prompt(shell);
-		line = readline(NULL);
+		prompt = build_prompt(shell);
+		line = readline(prompt);
+		free(prompt);
 		if (!line || !ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1))
 		{
 			free(line);

@@ -91,12 +91,14 @@ static char	*read_non_interactive_line(void)
 char	*read_user_input(t_shell *shell)
 {
 	char	*line;
+	char	*prompt;
 
 	set_prompt_state(shell, PROMPT_DEFAULT);
 	if (is_interactive_shell(shell))
 	{
-		display_prompt(shell);
-		line = readline(NULL);
+		prompt = build_prompt(shell);
+		line = readline(prompt);
+		free(prompt);
 		if (!line)
 		{
 			write(1, "exit\n", 5);
