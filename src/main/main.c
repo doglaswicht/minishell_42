@@ -26,6 +26,6 @@ int	main(int argc, char **argv, char **envp)
 	shell.env = init_env_from_environ(envp);
 	shell.last_exit_code = 0;
 	shell_loop(&shell);
-	exit_clean(&shell, 0);
+	exit_clean(&shell, shell.last_exit_code);
 	return (0);
 }

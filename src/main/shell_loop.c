@@ -15,15 +15,40 @@
 #include "expansion.h"
 #include "quotes.h"
 #include "signals.h"
-#include <readline/readline.h>
+#include "utils.h"
 #include <readline/history.h>
 
-static void	process_line(char *line, t_shell *shell)
+char	*read_complete_line(char *line, t_shell *shell);
+
+static void	validate_and_execute(char *expanded, t_shell *shell)
 {
 	t_token	*tokens;
 	t_cmd	*cmds;
+
+	tokens = tokenize_input(expanded);
+	if (!validate_token_syntax(tokens, shell))
+	{
+		free_token_list(tokens);
+		free_user_input(expanded);
+		return ;
+	}
+	cmds = parse_tokens_to_cmds(tokens);
+	if (cmds)
+		execute_pipeline(cmds, shell);
+	free_command_list(cmds);
+	free_token_list(tokens);
+	free_user_input(expanded);
+}
+
+static void	process_line(char *line, t_shell *shell)
+{
 	char	*expanded;
 
+	line = read_complete_line(line, shell);
+	if (!line)
+		return ;
+	if (*line && is_interactive_shell(shell))
+		add_history(line);
 	expanded = expand_variables(line, shell->env, shell->last_exit_code);
 	free_user_input(line);
 	if (!expanded)
@@ -35,13 +60,7 @@ static void	process_line(char *line, t_shell *shell)
 		free_user_input(expanded);
 		return ;
 	}
-	tokens = tokenize_input(expanded);
-	cmds = parse_tokens_to_cmds(tokens);
-	if (cmds)
-		execute_pipeline(cmds, shell);
-	free_command_list(cmds);
-	free_token_list(tokens);
-	free_user_input(expanded);
+	validate_and_execute(expanded, shell);
 }
 
 int	shell_loop(t_shell *shell)
@@ -55,8 +74,6 @@ int	shell_loop(t_shell *shell)
 		line = read_user_input(shell);
 		if (!line)
 			break ;
-		if (*line && is_interactive_shell(shell))
-			add_history(line);
 		process_line(line, shell);
 		if (g_signal != 0)
 		{

@@ -45,5 +45,7 @@ char	*build_prompt(t_shell *shell)
 		return (NULL);
 	if (shell->prompt.mode == PROMPT_HEREDOC)
 		return (safe_strdup("heredoc> "));
+	if (shell->prompt.mode == PROMPT_CONTINUATION)
+		return (safe_strdup("quote> "));
 	return (build_status_prompt(shell));
 }

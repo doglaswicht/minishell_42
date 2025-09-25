@@ -31,6 +31,7 @@ LIBFT		= $(LIBFT_DIR)/libft.a
 SRCS	= \
 	src/main/main.c \
 	src/main/shell_loop.c \
+	src/main/shell_loop_utils.c \
 	src/input/read_input.c \
 	src/input/readline_config.c \
 	src/input/prompt_init.c \
@@ -57,6 +58,7 @@ SRCS	= \
 	src/expansion/expand_loop.c \
 	src/parser/ft_add_arg.c \
 	src/parser/parser_main.c \
+	src/parser/parser_syntax.c \
 	src/parser/parser_main_utils.c \
 	src/parser/parser_cmd.c \
 	src/parser/parser_utils.c \
@@ -84,6 +86,7 @@ SRCS	= \
 	src/builtin/export.c \
 	src/builtin/export_utils.c \
 	src/builtin/unset.c \
+	src/builtin/exit_utils.c \
 	src/builtin/exit.c \
 	src/env/env_init.c \
 	src/env/env_helpers.c \

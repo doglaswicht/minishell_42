@@ -17,6 +17,7 @@
 # include "env.h"
 
 typedef struct s_redir	t_redir;
+typedef struct s_shell	t_shell;
 
 typedef struct s_cmd
 {
@@ -48,5 +49,6 @@ void	add_redirection(t_redir **list, t_redir *new_redir);
 int		process_word_token(t_cmd *current, t_token *token);
 int		process_redirection_token(t_cmd *current, t_token **tokens);
 t_cmd	*create_new_command(t_cmd **cmds, int needs_pipe, int segment_index);
+int		validate_token_syntax(t_token *tokens, t_shell *shell);
 
 #endif

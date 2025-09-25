@@ -14,6 +14,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include "redir.h"
+#include "signals.h"
 
 /*
 ** open_input_file
@@ -49,7 +50,11 @@ int	setup_redir_input(t_redir *redir, t_shell *shell)
 	else
 		return (0);
 	if (fd < 0)
+	{
+		if (g_signal == 130)
+			return (-1);
 		return (handle_redir_error(redir->target));
+	}
 	if (dup2(fd, STDIN_FILENO) < 0)
 	{
 		perror("dup2");

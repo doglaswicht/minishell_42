@@ -37,7 +37,12 @@ void	child_process_exec(t_cmd *cmd, t_shell *shell, int is_last)
 
 	(void)is_last;
 	if (handle_redirections(cmd, shell) < 0)
-		exit(1);
+	{
+		shell->last_exit_code = 1;
+		if (g_signal == 130)
+			shell->last_exit_code = 130;
+		exit(shell->last_exit_code);
+	}
 	if (is_builtin(cmd))
 	{
 		status = execute_builtin(cmd, shell);

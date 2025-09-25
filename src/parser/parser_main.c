@@ -16,42 +16,73 @@
 #include "libft.h"
 #include <stdlib.h>
 
-static void	handle_pipe_token(t_cmd **current, int *segment_index,
-		int needs_pipe, int total_segments)
+#define STATE_NEEDS_PIPE 0
+#define STATE_SEGMENT_INDEX 1
+#define STATE_TOTAL_SEGMENTS 2
+
+static void	handle_pipe_token(t_cmd ***current, int state[3])
 {
-	if (*current && !command_is_empty(*current)
-		&& needs_pipe && *segment_index < total_segments - 1)
-		(*current)->pipe_out = 1;
-	*current = NULL;
-	(*segment_index)++;
+	if (**current && !command_is_empty(**current)
+		&& state[STATE_NEEDS_PIPE]
+		&& state[STATE_SEGMENT_INDEX] < state[STATE_TOTAL_SEGMENTS] - 1)
+		(**current)->pipe_out = 1;
+	**current = NULL;
+	state[STATE_SEGMENT_INDEX]++;
 }
 
-static t_cmd	*parse_token_loop(t_token *tokens, t_cmd **cmds,
-		t_cmd **current, int needs_pipe)
+static int	create_command_if_needed(
+		t_token *token,
+		t_cmd ***current,
+		t_cmd **cmds,
+		int state[3])
 {
-	int	segment_index;
-	int	total_segments;
+	int	needs;
+	int	segment;
 
-	segment_index = 0;
-	total_segments = count_command_segments(tokens);
+	if (**current || token->type == TOKEN_PIPE)
+		return (1);
+	needs = state[STATE_NEEDS_PIPE];
+	segment = state[STATE_SEGMENT_INDEX];
+	**current = create_new_command(cmds, needs, segment);
+	if (!**current)
+		return (0);
+	return (1);
+}
+
+static int	process_redirection_node(
+		t_cmd *current,
+		t_token **tokens,
+		t_cmd **cmds)
+{
+	if (!current)
+		return (1);
+	if (process_redirection_token(current, tokens) == -1)
+	{
+		free_command_list(*cmds);
+		return (0);
+	}
+	return (1);
+}
+
+static t_cmd	*parse_token_loop(
+		t_token *tokens,
+		t_cmd **cmds,
+		t_cmd **current,
+		int state[3])
+{
 	while (tokens)
 	{
-		if (!*current && tokens->type != TOKEN_PIPE)
-		{
-			*current = create_new_command(cmds, needs_pipe, segment_index);
-			if (!*current)
-				return (NULL);
-		}
+		if (!create_command_if_needed(tokens, &current, cmds, state))
+			return (NULL);
 		if (tokens->type == TOKEN_WORD)
 			process_word_token(*current, tokens);
-		else if (is_redirection_token(tokens) && *current)
+		else if (is_redirection_token(tokens))
 		{
-			if (process_redirection_token(*current, &tokens) == -1)
-				return (free_command_list(*cmds), NULL);
+			if (!process_redirection_node(*current, &tokens, cmds))
+				return (NULL);
 		}
 		else if (tokens->type == TOKEN_PIPE)
-			handle_pipe_token(current, &segment_index, \
-needs_pipe, total_segments);
+			handle_pipe_token(&current, state);
 		tokens = tokens->next;
 	}
 	return (*cmds);
@@ -61,10 +92,12 @@ t_cmd	*parse_tokens_to_cmds(t_token *tokens)
 {
 	t_cmd	*cmds;
 	t_cmd	*current;
-	int		needs_pipe;
+	int		state[3];
 
 	cmds = NULL;
 	current = NULL;
-	needs_pipe = command_needs_pipe(tokens);
-	return (parse_token_loop(tokens, &cmds, &current, needs_pipe));
+	state[STATE_NEEDS_PIPE] = command_needs_pipe(tokens);
+	state[STATE_SEGMENT_INDEX] = 0;
+	state[STATE_TOTAL_SEGMENTS] = count_command_segments(tokens);
+	return (parse_token_loop(tokens, &cmds, &current, state));
 }

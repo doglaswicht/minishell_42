@@ -13,6 +13,7 @@
 #include "exec.h"
 #include "builtin.h"
 #include "redir.h"
+#include "signals.h"
 #include <unistd.h>
 #include <signal.h>
 
@@ -36,32 +37,22 @@ static int	handle_builtin_execution(t_cmd *cmd, t_shell *shell)
 
 	saved[0] = dup(STDIN_FILENO);
 	saved[1] = dup(STDOUT_FILENO);
-	if (saved[0] < 0 || saved[1] < 0 || handle_redirections(cmd, shell) < 0)
+	if (saved[0] < 0 || saved[1] < 0
+		|| handle_redirections(cmd, shell) < 0)
 	{
 		restore_stdio(saved);
-		return (shell->last_exit_code = 1);
+		shell->last_exit_code = 1;
+		if (g_signal == 130)
+			shell->last_exit_code = 130;
+		return (shell->last_exit_code);
 	}
 	shell->last_exit_code = execute_builtin(cmd, shell);
 	restore_stdio(saved);
 	return (shell->last_exit_code);
 }
 
-int	execute_single_command(t_cmd *cmd, t_shell *shell)
+static void	update_wait_status(int status, t_shell *shell)
 {
-	pid_t	pid;
-	int		status;
-	int		fds[2];
-
-	if (!cmd)
-		return (0);
-	if (is_builtin(cmd))
-		return (handle_builtin_execution(cmd, shell));
-	fds[0] = STDIN_FILENO;
-	fds[1] = STDOUT_FILENO;
-	pid = spawn_child_process(cmd, shell, fds, 1);
-	if (pid < 0)
-		return (shell->last_exit_code = 1);
-	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
 		shell->last_exit_code = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
@@ -72,6 +63,27 @@ int	execute_single_command(t_cmd *cmd, t_shell *shell)
 	}
 	else
 		shell->last_exit_code = 1;
-	shell->last_exit_code = shell->last_exit_code;
+}
+
+int	execute_single_command(t_cmd *cmd, t_shell *shell)
+{
+	pid_t	pid;
+	int		fds[2];
+	int		status;
+
+	if (!cmd)
+		return (0);
+	if (is_builtin(cmd))
+		return (handle_builtin_execution(cmd, shell));
+	fds[0] = STDIN_FILENO;
+	fds[1] = STDOUT_FILENO;
+	pid = spawn_child_process(cmd, shell, fds, 1);
+	if (pid < 0)
+	{
+		shell->last_exit_code = 1;
+		return (1);
+	}
+	waitpid(pid, &status, 0);
+	update_wait_status(status, shell);
 	return (shell->last_exit_code);
 }

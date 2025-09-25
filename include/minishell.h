@@ -38,7 +38,8 @@ typedef struct s_cmd	t_cmd;
 typedef enum e_prompt_state
 {
 	PROMPT_DEFAULT,
-	PROMPT_HEREDOC
+	PROMPT_HEREDOC,
+	PROMPT_CONTINUATION
 }	t_prompt_state;
 
 typedef struct s_prompt_info

@@ -17,7 +17,11 @@
 #include "input.h"
 #include "libft.h"
 
-static char	*ensure_capacity(char *line, size_t *cap, size_t current_len, size_t extra)
+static char	*ensure_capacity(
+		char *line,
+		size_t *cap,
+		size_t current_len,
+		size_t extra)
 {
 	char	*tmp;
 	size_t	needed;
@@ -26,15 +30,15 @@ static char	*ensure_capacity(char *line, size_t *cap, size_t current_len, size_t
 	needed = current_len + extra;
 	if (*cap > needed)
 		return (line);
-	new_cap = (*cap == 0) ? 64 : *cap;
+	if (*cap == 0)
+		new_cap = 64;
+	else
+		new_cap = *cap;
 	while (new_cap <= needed)
 		new_cap *= 2;
 	tmp = malloc(new_cap);
 	if (!tmp)
-	{
-		free(line);
-		return (NULL);
-	}
+		return (free(line), NULL);
 	if (line)
 	{
 		ft_memcpy(tmp, line, current_len);
@@ -44,41 +48,49 @@ static char	*ensure_capacity(char *line, size_t *cap, size_t current_len, size_t
 	return (tmp);
 }
 
+static int	read_stream(char **line, size_t *len, size_t *cap)
+{
+	char	c;
+	char	*tmp;
+	int		bytes;
+
+	while (1)
+	{
+		bytes = read(STDIN_FILENO, &c, 1);
+		if (bytes < 0 && errno == EINTR)
+			continue ;
+		if (bytes <= 0)
+			return (bytes);
+		tmp = ensure_capacity(*line, cap, *len, 2);
+		if (!tmp)
+		{
+			*line = NULL;
+			return (-1);
+		}
+		*line = tmp;
+		(*line)[(*len)++] = c;
+		if (c == '\n')
+			return (1);
+	}
+}
+
 static char	*read_non_interactive_line(void)
 {
 	char	*line;
 	size_t	len;
 	size_t	cap;
-	char	c;
-	ssize_t	bytes;
+	int		status;
 
 	line = NULL;
 	len = 0;
 	cap = 0;
-	while (1)
-	{
-		bytes = read(STDIN_FILENO, &c, 1);
-		if (bytes < 0)
-		{
-			if (errno == EINTR)
-				continue ;
-			free(line);
-			return (NULL);
-		}
-		if (bytes == 0)
-			break ;
-		line = ensure_capacity(line, &cap, len, 2);
-		if (!line)
-			return (NULL);
-		line[len++] = c;
-		if (c == '\n')
-			break ;
-	}
-	if (bytes == 0 && len == 0)
-	{
-		free(line);
+	status = read_stream(&line, &len, &cap);
+	if (status == -1)
 		return (NULL);
-	}
+	if (status == 0 && len == 0)
+		return (free(line), NULL);
+	if (!line)
+		return (NULL);
 	line = ensure_capacity(line, &cap, len, 1);
 	if (!line)
 		return (NULL);
@@ -88,28 +100,23 @@ static char	*read_non_interactive_line(void)
 	return (line);
 }
 
-char	*read_user_input(t_shell *shell)
+static char	*read_interactive(t_shell *shell)
 {
 	char	*line;
 	char	*prompt;
 
 	set_prompt_state(shell, PROMPT_DEFAULT);
-	if (is_interactive_shell(shell))
-	{
-		prompt = build_prompt(shell);
-		line = readline(prompt);
-		free(prompt);
-		if (!line)
-		{
-			write(1, "exit\n", 5);
-			return (NULL);
-		}
-		return (line);
-	}
-	line = read_non_interactive_line();
+	prompt = build_prompt(shell);
+	line = readline(prompt);
+	free(prompt);
 	if (!line)
-	{
-		return (NULL);
-	}
+		write(1, "exit\n", 5);
 	return (line);
+}
+
+char	*read_user_input(t_shell *shell)
+{
+	if (is_interactive_shell(shell))
+		return (read_interactive(shell));
+	return (read_non_interactive_line());
 }
