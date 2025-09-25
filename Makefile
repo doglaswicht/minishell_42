@@ -73,6 +73,7 @@ SRCS	= \
 	src/exec/exec_pipeline_helpers.c \
 	src/exec/exec_fork.c \
 	src/exec/exec_utils.c \
+	src/exec/exec_errors.c \
 	src/exec/exec_path.c \
 	src/exec/pipes.c \
 	src/exec/wait.c \

@@ -63,3 +63,41 @@ int	set_env_value(t_env **env, const char *key, const char *value)
 	add_env_node((char *)key, (char *)value, env);
 	return (0);
 }
+
+static int	append_to_value(t_env *node, const char *suffix)
+{
+	char	*base;
+	char	*new_value;
+
+	if (!suffix)
+		suffix = "";
+	base = node->value;
+	if (!base)
+		base = "";
+	new_value = ft_strjoin(base, suffix);
+	if (!new_value)
+		return (1);
+	free(node->value);
+	node->value = new_value;
+	return (0);
+}
+
+int	append_env_value(t_env **env, const char *key, const char *value)
+{
+	t_env	*tmp;
+
+	if (!env || !key || !value)
+		return (1);
+	if (!is_valid_env_key(key))
+		return (1);
+	tmp = *env;
+	while (tmp)
+	{
+		if (ft_strncmp(tmp->key, key, ft_strlen(key)) == 0
+			&& tmp->key[ft_strlen(key)] == '\0')
+			return (append_to_value(tmp, value));
+		tmp = tmp->next;
+	}
+	add_env_node((char *)key, (char *)value, env);
+	return (0);
+}

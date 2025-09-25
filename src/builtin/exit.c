@@ -21,7 +21,7 @@ static int	report_numeric_error(const char *arg, t_shell *shell)
 	ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
 	ft_putstr_fd((char *)arg, STDERR_FILENO);
 	ft_putendl_fd(": numeric argument required", STDERR_FILENO);
-	shell->last_exit_code = 255;
+	shell->last_exit_code = 2;
 	shell->is_running = 0;
 	return (shell->last_exit_code);
 }
@@ -37,6 +37,13 @@ static int	handle_exit_argument(t_cmd *cmd, t_shell *shell, int argc)
 {
 	long long	value;
 
+	if (ft_strncmp(cmd->argv[1], "--", 3) == 0)
+	{
+		if (argc > 2)
+			return (handle_too_many_args(shell));
+		shell->is_running = 0;
+		return (shell->last_exit_code);
+	}
 	if (!is_valid_exit_code_arg(cmd->argv[1])
 		|| !parse_exit_value(cmd->argv[1], &value))
 		return (report_numeric_error(cmd->argv[1], shell));

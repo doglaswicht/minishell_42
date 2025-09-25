@@ -36,6 +36,12 @@ int		is_path_absolute_or_relative(const char *cmd);
 int		is_valid_executable(const char *path);
 int		launch_execve(t_cmd *cmd, t_shell *shell);
 void	handle_exec_error(const char *msg);
+void	expand_tilde_args(t_cmd *cmd, t_shell *shell);
+int		is_dir_path(const char *path);
+int		check_directory_and_report(t_cmd *cmd);
+int		report_not_found(char **envp, char *cmd0);
+int		map_exec_errno_and_cleanup(char **envp, char *path, char *cmd0, \
+int ret);
 int		setup_pipes(t_cmd *cmds, int ***pipes);
 void	close_all_pipes(int **pipes, int count);
 void	free_pipe_fds(int **pipes, int count);
@@ -46,5 +52,7 @@ int		execute_pipeline_commands(t_cmd *cmds, t_shell *shell);
 void	setup_fds(int fds[2], int i, t_shell *shell);
 int		execute_single_command_in_pipeline(t_cmd *cmd, t_shell *shell, \
 int fds[2], int is_last);
+
+void	free_envp(char **envp);
 
 #endif

@@ -42,9 +42,14 @@ char	*extract_var_key(const char *line, int *len)
 	if (!line)
 		return (NULL);
 	idx = 0;
-	while (line[idx] && (ft_isalnum((unsigned char)line[idx])
-			|| line[idx] == '_'))
-		idx++;
+	if (ft_isdigit((unsigned char)line[idx]))
+		idx = 1;
+	else
+	{
+		while (line[idx]
+			&& (ft_isalnum((unsigned char)line[idx]) || line[idx] == '_'))
+			idx++;
+	}
 	if (len)
 		*len = idx;
 	return (ft_strndup(line, idx));

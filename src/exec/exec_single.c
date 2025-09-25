@@ -35,6 +35,7 @@ static int	handle_builtin_execution(t_cmd *cmd, t_shell *shell)
 {
 	int		saved[2];
 
+	expand_tilde_args(cmd, shell);
 	saved[0] = dup(STDIN_FILENO);
 	saved[1] = dup(STDOUT_FILENO);
 	if (saved[0] < 0 || saved[1] < 0

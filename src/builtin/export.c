@@ -15,6 +15,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static int	is_valid_name_char(char c)
+{
+	return (ft_isalnum((unsigned char)c) || c == '_');
+}
+
 int	validate_export_argument(const char *s)
 {
 	int	i;
@@ -24,32 +29,62 @@ int	validate_export_argument(const char *s)
 	i = 1;
 	while (s[i] && s[i] != '=')
 	{
-		if (!(ft_isalnum(s[i]) || s[i] == '_'))
+		if (s[i] == '+' && s[i + 1] == '=')
+			break ;
+		if (!is_valid_name_char(s[i]))
 			return (0);
 		i++;
 	}
 	return (1);
 }
 
-int	export_variable(const char *arg, t_shell *shell)
+static int	parse_key_value(const char *arg, char **key, char **value,
+		int *append)
 {
 	char	*eq;
+
+	*append = 0;
+	eq = ft_strchr(arg, '=');
+	if (!eq)
+	{
+		*key = ft_strdup(arg);
+		*value = ft_strdup("");
+		if (!*key || !*value)
+			return (1);
+		return (0);
+	}
+	if (eq > arg && *(eq - 1) == '+')
+	{
+		*append = 1;
+		*key = ft_substr(arg, 0, (eq - arg) - 1);
+	}
+	else
+		*key = ft_substr(arg, 0, eq - arg);
+	*value = ft_strdup(eq + 1);
+	if (!*key || !*value)
+		return (1);
+	return (0);
+}
+
+int	export_variable(const char *arg, t_shell *shell)
+{
 	char	*key;
 	char	*value;
 	int		res;
+	int		append;
 
-	eq = ft_strchr(arg, '=');
-	if (!eq)
-		return (set_env_value(&shell->env, arg, ""));
-	key = ft_substr(arg, 0, eq - arg);
-	value = ft_strdup(eq + 1);
-	if (!key || !value)
+	key = NULL;
+	value = NULL;
+	if (parse_key_value(arg, &key, &value, &append))
 	{
 		free(key);
 		free(value);
 		return (1);
 	}
-	res = set_env_value(&shell->env, key, value);
+	if (append)
+		res = append_env_value(&shell->env, key, value);
+	else
+		res = set_env_value(&shell->env, key, value);
 	free(key);
 	free(value);
 	return (res);
@@ -76,7 +111,7 @@ int	builtin_export(t_cmd *cmd, t_shell *shell)
 		}
 		else
 		{
-			printf("export: `%s`: not a valid identifier\n", cmd->argv[i]);
+			ft_putendl_fd(" not a valid identifier", STDERR_FILENO);
 			status = 1;
 		}
 		i++;

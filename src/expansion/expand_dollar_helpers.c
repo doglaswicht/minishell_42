@@ -40,8 +40,18 @@ char	*process_dollar_sign(const char *line, int *i, t_env *env,
 {
 	if (line[*i + 1] == '?')
 		return (handle_exit_status(line, i, last_status));
+	else if (line[*i + 1] == '!')
+	{
+		*i += 2;
+		return (safe_strdup(""));
+	}
 	else if (line[*i + 1] && is_expandable(line[*i + 1]))
 		return (handle_variable_expansion(line, i, env));
+	if (line[*i + 1])
+	{
+		(*i)++;
+		return (safe_strdup("$"));
+	}
 	(*i)++;
 	return (safe_strdup("$"));
 }

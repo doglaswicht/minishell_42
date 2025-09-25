@@ -67,10 +67,15 @@ int	process_word_token(t_cmd *current, t_token *token)
 int	process_redirection_token(t_cmd *current, t_token **tokens)
 {
 	t_redir	*redir;
+	char	*clean;
 
 	if (!current || !(*tokens)->next || (*tokens)->next->type != TOKEN_WORD)
 		return (-1);
-	redir = new_redirection((*tokens)->type, (*tokens)->next->value);
+	clean = remove_quotes((*tokens)->next->value);
+	if (!clean)
+		return (-1);
+	redir = new_redirection((*tokens)->type, clean);
+	free(clean);
 	if (!redir)
 		return (-1);
 	add_redirection(&current->redir, redir);

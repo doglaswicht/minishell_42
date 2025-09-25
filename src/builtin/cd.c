@@ -21,6 +21,11 @@ int	builtin_cd(t_cmd *cmd, t_shell *shell)
 	char	*oldpwd;
 	char	*cwd;
 
+	if (cmd->argv && cmd->argv[1] && cmd->argv[2])
+	{
+		ft_putendl_fd("cd: too many arguments", STDERR_FILENO);
+		return (1);
+	}
 	target = get_target_path(cmd, shell);
 	if (!target)
 	{

@@ -15,7 +15,13 @@
 
 int	is_path_absolute_or_relative(const char *cmd)
 {
-	return (cmd && (cmd[0] == '/' || cmd[0] == '.'));
+	if (!cmd)
+		return (0);
+	if (cmd[0] == '/' || cmd[0] == '.')
+		return (1);
+	if (ft_strchr(cmd, '/') != NULL)
+		return (1);
+	return (0);
 }
 
 int	is_valid_executable(const char *path)
@@ -24,11 +30,11 @@ int	is_valid_executable(const char *path)
 
 	if (!path)
 		return (0);
-	if (access(path, X_OK) != 0)
-		return (0);
 	if (stat(path, &sb) != 0)
 		return (0);
 	if (S_ISDIR(sb.st_mode))
+		return (0);
+	if (access(path, X_OK) != 0)
 		return (0);
 	return (1);
 }
@@ -64,7 +70,7 @@ char	*resolve_command_path(char *cmd, t_env *env)
 
 	if (is_path_absolute_or_relative(cmd))
 	{
-		if (is_valid_executable(cmd))
+		if (stat(cmd, &(struct stat){0}) == 0)
 			return (ft_strdup(cmd));
 		return (NULL);
 	}

@@ -44,7 +44,7 @@ static void	report_syntax_error(t_shell *shell, t_token *token)
 		ft_strlen("minishell: syntax error near unexpected token `"));
 	write(STDERR_FILENO, repr, ft_strlen(repr));
 	write(STDERR_FILENO, "'\n", 2);
-	shell->last_exit_code = 258;
+	shell->last_exit_code = 2;
 }
 
 static int	check_pipe(t_token *token, t_token *prev, t_shell *shell)
@@ -59,8 +59,7 @@ static int	check_pipe(t_token *token, t_token *prev, t_shell *shell)
 		report_syntax_error(shell, NULL);
 		return (0);
 	}
-	if (token->next->type == TOKEN_PIPE
-		|| is_redirection_token(token->next))
+	if (token->next->type == TOKEN_PIPE)
 	{
 		report_syntax_error(shell, token->next);
 		return (0);

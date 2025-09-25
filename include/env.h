@@ -26,6 +26,7 @@ typedef struct s_env
 t_env	*init_env_from_environ(char **envp);
 char	*get_env_value(t_env *env, const char *key);
 int		set_env_value(t_env **env, const char *key, const char *value);
+int		append_env_value(t_env **env, const char *key, const char *value);
 int		unset_env_value(t_env **env, const char *key);
 int		env_key_exists(t_env *env, const char *key);
 int		is_valid_env_key(const char *key);

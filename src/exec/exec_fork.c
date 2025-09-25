@@ -18,24 +18,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+#include <sys/stat.h>
 
-static void	free_envp(char **envp)
-{
-	int	i;
-
-	if (!envp)
-		return ;
-	i = 0;
-	while (envp[i])
-		free(envp[i++]);
-	free(envp);
-}
+/* free_envp now lives in exec_utils.c */
 
 void	child_process_exec(t_cmd *cmd, t_shell *shell, int is_last)
 {
 	int	status;
 
 	(void)is_last;
+	expand_tilde_args(cmd, shell);
 	if (handle_redirections(cmd, shell) < 0)
 	{
 		shell->last_exit_code = 1;
@@ -81,21 +73,16 @@ int	launch_execve(t_cmd *cmd, t_shell *shell)
 	char	*path;
 	char	**envp;
 	int		ret;
+	int		dircode;
 
+	dircode = check_directory_and_report(cmd);
+	if (dircode != -1)
+		return (dircode);
 	path = resolve_command_path(cmd->argv[0], shell->env);
 	envp = env_to_str_array(shell->env);
 	if (!path)
-	{
-		fprintf(stderr, "minishell: %s: command not found\n", cmd->argv[0]);
-		free_envp(envp);
-		return (127);
-	}
+		return (report_not_found(envp, cmd->argv[0]));
 	execve(path, cmd->argv, envp);
 	ret = errno;
-	handle_exec_error(cmd->argv[0]);
-	free(path);
-	free_envp(envp);
-	if (ret == EACCES)
-		return (126);
-	return (127);
+	return (map_exec_errno_and_cleanup(envp, path, cmd->argv[0], ret));
 }

@@ -30,11 +30,9 @@ void	signal_handler_parent(int sig)
 	}
 	else if (sig == SIGQUIT)
 	{
-		g_signal = 131;
 		if (rl_readline_state & RL_STATE_READCMD)
 		{
 			rl_on_new_line();
-			rl_replace_line("", 0);
 			rl_redisplay();
 		}
 	}
@@ -50,6 +48,5 @@ void	signal_handler_child(int sig)
 	else if (sig == SIGQUIT)
 	{
 		g_signal = 131;
-		write(1, "Quit (core dumped)\n", 19);
 	}
 }
