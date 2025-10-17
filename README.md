@@ -11,7 +11,7 @@ Building Minishell was one of the most challenging and eye-opening experiences i
 I learned how a real shell works behind the scenes — from parsing user input and handling environment variables to creating processes, managing pipes, and dealing with signals.
 This project taught me a lot about system programming, memory management, and how to design clean, modular C code that behaves just like a real Unix shell.
 
-
+```
 
 ├── Makefile
 ├── README.md
@@ -123,6 +123,8 @@ This project taught me a lot about system programming, memory management, and ho
         ├── malloc_helpers.c
         ├── str_join.c
         └── str_utils.c
+
+```
 
 ### Skills Developed
 
