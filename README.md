@@ -1,6 +1,6 @@
 
 
-[!minishell](https://giphy.com/embed/jUhpOyPjtyiDLuL8ZX)
+[!minishell](https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3h3NDVzdWN0dmFlZnpid2o5eXhkcWwwMGh2b3FkZjEwZnZ5MmRnciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/jUhpOyPjtyiDLuL8ZX/giphy.gif)
 # 🐚 Minishell
 
 ### 🧾 About the Project
