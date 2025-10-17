@@ -128,21 +128,14 @@ This project taught me a lot about system programming, memory management, and ho
 
 ### Skills Developed
 
-Process creation and synchronization (fork, execve, wait)
-
-File descriptors and inter-process communication using pipe and dup2
-
-Parsing and tokenization of complex user input
-
-Quote and environment variable handling ($HOME, $USER, $?)
-
-Built-in command implementation (cd, echo, export, etc.)
-
-Signal handling (SIGINT, SIGQUIT, SIGTERM)
-
-Clean and modular C architecture design
-
-Memory management and debugging with Valgrind
+- Process creation and synchronization (fork, execve, wait)
+- File descriptors and inter-process communication using pipe and dup2
+- Parsing and tokenization of complex user input
+- Quote and environment variable handling ($HOME, $USER, $?)
+- Built-in command implementation (cd, echo, export, etc.)
+- Signal handling (SIGINT, SIGQUIT, SIGTERM)
+- Clean and modular C architecture design
+- Memory management and debugging with Valgrind
 
 
 ### ⚙️ How to Run
