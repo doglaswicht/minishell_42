@@ -1,5 +1,6 @@
 
 
+[!minishell](https://giphy.com/embed/jUhpOyPjtyiDLuL8ZX)
 # 🐚 Minishell
 
 ### 🧾 About the Project
