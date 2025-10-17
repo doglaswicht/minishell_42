@@ -173,8 +173,8 @@ make fclean
 minishell$ echo "Hello $USER"
 Hello doglas
 
-minishell$ ls | grep minishell > result.txt
-minishell$ cat result.txt
-minishell.c
-minishell_utils.c
+ls | grep minishell > result.txt
+cat result.txt
+pwd
+
 ```
