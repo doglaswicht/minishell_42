@@ -1,4 +1,4 @@
-[!Minishell](https://giphy.com/embed/jUhpOyPjtyiDLuL8ZX" width="480" height="468" style="" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/pearl-shell-phiaka-jUhpOyPjtyiDLuL8ZX)
+
 
 # 🐚 Minishell
 
