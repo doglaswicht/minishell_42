@@ -3,12 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   exec_errors.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codex <codex@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/25 00:00:00 by codex             #+#    #+#             */
-/*   Updated: 2025/09/25 00:00:00 by codex            ###   ########.fr       */
+/*   Created: 2025/10/18 00:32:45 by dleite-b          #+#    #+#             */
+/*   Updated: 2025/10/18 00:32:46 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
 
 #include "exec.h"
 #include <stdio.h>
