@@ -161,14 +161,19 @@ make
 ``` 
 #### 3. Run Minishell
 
+```
 ./minishell
+```
 
 #### 4. Clean compiled files
+```
 make clean
 make fclean
+```
 
 #### Example Usage
 
+```
 minishell$ echo "Hello $USER"
 Hello doglas
 
@@ -176,3 +181,4 @@ minishell$ ls | grep minishell > result.txt
 minishell$ cat result.txt
 minishell.c
 minishell_utils.c
+```
