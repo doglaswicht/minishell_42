@@ -3,12 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/26 20:11:49 by procha-r          #+#    #+#             */
-/*   Updated: 2025/08/26 23:09:02 by procha-r         ###   ########.fr       */
+/*   Created: 2025/10/18 00:36:07 by dleite-b          #+#    #+#             */
+/*   Updated: 2025/10/18 00:36:08 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
 
 #ifndef BUILTIN_H
 # define BUILTIN_H
