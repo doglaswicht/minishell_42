@@ -3,12 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/06 12:25:12 by pedroribeir       #+#    #+#             */
-/*   Updated: 2025/08/26 23:11:48 by procha-r         ###   ########.fr       */
+/*   Created: 2025/10/18 00:29:54 by dleite-b          #+#    #+#             */
+/*   Updated: 2025/10/18 00:29:55 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
 
 #include "tokenizer.h"
 #include "libft.h"

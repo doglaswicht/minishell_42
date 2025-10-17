@@ -3,12 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   str_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: procha-r <procha-r@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dleite-b <dleite-b@student.42lausanne.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/05 16:58:00 by dleite-b          #+#    #+#             */
-/*   Updated: 2025/08/27 18:46:47 by procha-r         ###   ########.fr       */
+/*   Created: 2025/10/18 00:28:45 by dleite-b          #+#    #+#             */
+/*   Updated: 2025/10/18 00:28:48 by dleite-b         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
 
 #include "utils.h"
 #include "libft.h"
