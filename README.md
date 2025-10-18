@@ -145,7 +145,7 @@ This project taught me a lot about system programming, memory management, and ho
 #### 1. Clone the repository
 
 ```
-git clone https://github.com/yourusername/minishell.git
+git clone https://github.com/doglaswicht/minishell_42
 cd minishell
 
 ```
