@@ -1,0 +1,81 @@
+# SIMPLE COMMAND
+ls
+/bin/ls
+ls -la
+abcdef
+echo $?
+
+# ECHO / ARGUMENTS
+echo hello
+echo hello world
+echo -n hello
+echo -n -n hello
+
+# QUOTES
+echo '$USER'
+echo "$USER"
+echo "hello     world"
+echo '$?'
+
+# RETURN VALUE
+true
+echo $?
+false
+echo $?
+abcdef
+echo $?
+
+# ENV / EXPORT / UNSET
+env
+export TEST=hello
+echo $TEST
+env | grep TEST
+unset TEST
+echo $TEST
+
+# CD / PWD
+pwd
+cd /tmp
+pwd
+cd /
+pwd
+cd /naoexiste
+echo $?
+
+# PATH
+ls
+/bin/ls
+echo $PATH
+
+# REDIRECTIONS
+echo hello > /tmp/a
+cat < /tmp/a
+echo world >> /tmp/a
+cat /tmp/a
+echo test > /tmp/a > /tmp/b
+
+# PIPE
+echo hello | cat
+echo hello | wc -c
+cat /etc/passwd | grep root | wc -l
+
+# PIPE + REDIRECTION
+echo hello | cat > /tmp/out
+cat /tmp/out
+
+# HEREDOC
+cat << EOF
+hello
+EOF
+
+# SIGNALS
+sleep 100
+# Ctrl-C
+
+cat
+# Ctrl-\
+
+# prompt vazio:
+# Ctrl-C
+# Ctrl-\
+# Ctrl-D
